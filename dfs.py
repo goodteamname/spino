@@ -31,7 +31,7 @@ def dfs(time_series):
 # N = number of timesteps (5)    
 # k_max = int(N-1)/2 = maximum harmonic number
     alpha0 = np.mean(time_series)
-    for k in range(0, int((N-1)/2)):
+    for k in range(1, 1+int((N-1)/2)):
         C = np.cos(2*np.pi*j*k/N)
         S = np.sin(2*np.pi*j*k/N)
         Z = np.vstack((C, S))
@@ -41,7 +41,6 @@ def dfs(time_series):
     alpha = G[0, :]
     beta = G[1, :]
     power = 0.5 * (alpha**2 + beta**2)/np.var(time_series)
-
     return alpha, beta, power
 
 
