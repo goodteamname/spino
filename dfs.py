@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+
 
 def dfs(time_series):
     # DFS   Discrete Fourier series
@@ -48,6 +50,10 @@ Y = np.array([1, 2, 3, 4, 5, 6, 7])
 test = np.loadtxt('data/test_timeseries.csv', delimiter=',', dtype=float)
 test_data = test[:,1]
 
+dataframe = pd.read_csv('data/test_timeseries.csv')
+data = dataframe.values.tolist()
+data = np.array(data)
+test_data = data[:,-1]
 alpha, beta, power = dfs(test_data)
 
 print(alpha)
