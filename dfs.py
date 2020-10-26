@@ -15,8 +15,10 @@ def dfs(time_series):
 
     # Check length of time-series.  Must be odd and longer than 1
     N = len(time_series)
-    if N % 2 == 0 or N == 1:
-        print('Input vector must have length greater than 1 and ODD.')
+    if N % 2 == 0:
+        N = N[0:-1]
+    elif len(N) == 1:
+        print("length must be greater than 1")
 
     # Ensure that time_series is a column vector
     if len(time_series.shape) != 1:
