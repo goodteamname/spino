@@ -62,6 +62,8 @@ test_data = data[:,-1]
 table = dfs(test_data)
 
 """ print(alpha)
+
+print(alpha)
 print(beta)
 print(power)
 
@@ -80,3 +82,4 @@ plt.plot(test_data)
 plt.plot(fourier_approx(alpha,beta,test_data))
 plt.show()
  """
+
