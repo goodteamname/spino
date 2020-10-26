@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def dfs(time_series):
     # DFS   Discrete Fourier series
     #   DFS(time_series) computes the Discrete Fourier series of an input
@@ -26,7 +25,7 @@ def dfs(time_series):
     j = np.arange(0, N)
 
     # Calculate the coefficients at each frequenctime_series
-    G = np.zeros((2, int((N-1)/2)))
+    G = np.zeros((int((N-1)/2), 2))
     # 2 = sin, cos
     # N = number of timesteps (5)
     # k_max = int(N-1)/2 = maximum harmonic number
@@ -36,7 +35,7 @@ def dfs(time_series):
         S = np.sin(2*np.pi*j*k/N)
         Z = np.vstack((C, S))
         # print time_series
-        G[k-1, :] = (2./N) * np.matmul(Z, time_series.T - alpha0)
+        G[k-1, :] = (2./N) * np.matmul(Z, time_series - alpha0)
     # Assemble structure containing results
     alpha = G[:, 0]
     beta = G[:, 1]
@@ -44,9 +43,12 @@ def dfs(time_series):
     return alpha, beta, power
 
 
-Y = np.array([1, 2, 3, 4, 5])
+Y = np.array([1, 2, 3, 4, 5, 6, 7])
 
-alpha, beta, power = dfs(Y)
+test = np.loadtxt('data/test_timeseries.csv', delimiter=',', dtype=float)
+test_data = test[:,1]
+
+alpha, beta, power = dfs(test_data)
 
 print(alpha)
 print(beta)
