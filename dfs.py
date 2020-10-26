@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def dfs(time_series):
@@ -21,8 +22,8 @@ def dfs(time_series):
         print('even')
         time_series = time_series[0:-1]
         N -= 1
-    elif N == 1:
-        print("length must be greater than 1")
+    elif N <= 1:
+        raise ValueError("ValueError: length must be greater than 1")
 
     # Ensure that time_series is a column vector
     if len(time_series.shape) != 1:
@@ -51,35 +52,30 @@ def dfs(time_series):
     table = pd.DataFrame(d)
     return table
 
-test = np.loadtxt('data/test_timeseries.csv', delimiter=',', dtype=float)
-test_data = test[:,1]
-
-dataframe = pd.read_csv('data/test_timeseries.csv')
-print(dataframe)
-data = dataframe.values.tolist()
-data = np.array(data)
-test_data = data[:,-1]
-table = dfs(test_data)
-
-""" print(alpha)
-
-print(alpha)
-print(beta)
-print(power)
 
 def fourier_approx(alpha, beta, data):
     N = len(data)
-    k = np.arange(1,len(alpha)+1)
+    k = np.arange(1, len(alpha)+1)
     alpha0 = np.mean(data)
     y = np.zeros(N)
     for j in range(N):
         y[j] = alpha0 + np.sum(alpha*np.cos(2.*np.pi*k/N * j) + beta*np.sin(2.*np.pi*k/N * j))
     return y
 
-import matplotlib.pyplot as plt
+
+dataframe = pd.read_csv('data/test_timeseries.csv')
+print(dataframe)
+data = dataframe.values.tolist()
+data = np.array(data)
+test_data = data[:, -1]
+test_data = [0]
+table = dfs(test_data)
+
+print(table)
+print(table.alpha)
+print(table.beta)
+print(table.power)
 
 plt.plot(test_data)
-plt.plot(fourier_approx(alpha,beta,test_data))
+plt.plot(fourier_approx(table.alpha, table.beta, test_data))
 plt.show()
- """
-
