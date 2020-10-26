@@ -26,18 +26,18 @@ def dfs(time_series):
     j = np.arange(1, N+1)
 
     # Calculate the coefficients at each frequenctime_series
-    G = np.zeros((N, 2,  int((N-1)/2)))
-    for k in range(1, int((N-1)/2)):
+    G = np.zeros((2, N, int(N-1)/2)) 
+# 2 = sin, cos    
+# N = number of timesteps (5)    
+# k_max = int(N-1)/2 = maximum harmonic number
+    alpha0 = np.mean(time_series)
+    for k in range(0, int((N-1)/2)):
         C = np.cos(2*np.pi*j*k/N)
         S = np.sin(2*np.pi*j*k/N)
-        Z = np.vstack((C, S)).T
-        print(Z.shape)
-        a = (np.vstack((time_series, time_series)) - np.mean(time_series))
-        print(a.shape)
-        G[:, :, k] = (2/N) * Z * a
-
+        Z = np.vstack((C, S))
+        #print time_series
+        G[:,k] = (2./N) * np.matmul(Z, time_series - alpha0)
     # Assemble structure containing results
-    alpha0 = np.mean(time_series)
     alpha = G[0, :]
     beta = G[1, :]
     power = 0.5 * (alpha**2 + beta**2)/np.var(time_series)
