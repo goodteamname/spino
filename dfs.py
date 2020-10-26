@@ -16,8 +16,13 @@ def dfs(time_series):
 
     # Check length of time-series.  Must be odd and longer than 1
     N = len(time_series)
-    if N % 2 == 0 or N == 1:
-        print('Input vector must have length greater than 1 and ODD.')
+    print(N)
+    if N % 2 == 0:
+        print('even')
+        time_series = time_series[0:-1]
+        N -= 1
+    elif N == 1:
+        print("length must be greater than 1")
 
     # Ensure that time_series is a column vector
     if len(time_series.shape) != 1:
@@ -42,19 +47,21 @@ def dfs(time_series):
     alpha = G[:, 0]
     beta = G[:, 1]
     power = 0.5 * (alpha.T**2 + beta.T**2)/np.var(time_series, ddof=1)
-    return alpha, beta, power
-
-
-Y = np.array([1, 2, 3, 4, 5, 6, 7])
+    d = {'alpha': alpha, 'beta': beta, 'power': power}
+    table = pd.DataFrame(d)
+    return table
 
 test = np.loadtxt('data/test_timeseries.csv', delimiter=',', dtype=float)
 test_data = test[:,1]
 
 dataframe = pd.read_csv('data/test_timeseries.csv')
+print(dataframe)
 data = dataframe.values.tolist()
 data = np.array(data)
 test_data = data[:,-1]
-alpha, beta, power = dfs(test_data)
+table = dfs(test_data)
+
+""" print(alpha)
 
 print(alpha)
 print(beta)
@@ -74,3 +81,5 @@ import matplotlib.pyplot as plt
 plt.plot(test_data)
 plt.plot(fourier_approx(alpha,beta,test_data))
 plt.show()
+ """
+
