@@ -1,0 +1,22 @@
+# Parameters
+T = pi
+
+a_0 = 1.0
+
+a_1 = 1.0
+a_2 = 2.0
+a_3 = 3.0
+
+b_1 = 4.0
+b_2 = 5.0
+b_3 = 6.0
+
+# Linear trended data
+a = 0.0
+b = 1.0
+c = 2.0
+
+# Quadratic trend data
+a = 0.2
+b = 1.0
+c = 2.0
