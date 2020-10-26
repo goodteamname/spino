@@ -17,3 +17,4 @@ example_ts = ts(example_df)
 
 # To access pandas dataframe.
 print(example_ts.df)
+print(example_ts.df.head())
