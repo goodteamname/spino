@@ -22,8 +22,8 @@ def dfs(time_series):
         print('even')
         time_series = time_series[0:-1]
         N -= 1
-    elif N == 1:
-        print("length must be greater than 1")
+    elif N <= 1:
+        raise ValueError("ValueError: length must be greater than 1")
 
     # Ensure that time_series is a column vector
     if len(time_series.shape) != 1:
@@ -68,6 +68,7 @@ print(dataframe)
 data = dataframe.values.tolist()
 data = np.array(data)
 test_data = data[:, -1]
+test_data = [0]
 table = dfs(test_data)
 
 print(table)
