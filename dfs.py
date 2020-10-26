@@ -53,3 +53,18 @@ alpha, beta, power = dfs(test_data)
 print(alpha)
 print(beta)
 print(power)
+
+def fourier_approx(alpha, beta, data):
+    N = len(data)
+    k = np.arange(1,len(alpha)+1)
+    alpha0 = np.mean(data)
+    y = np.zeros(N)
+    for j in range(N):
+        y[j] = alpha0 + np.sum(alpha*np.cos(2.*np.pi*k/N * j) + beta*np.sin(2.*np.pi*k/N * j))
+    return y
+
+import matplotlib.pyplot as plt
+
+plt.plot(test_data)
+plt.plot(fourier_approx(alpha,beta,test_data))
+plt.show()
