@@ -17,7 +17,7 @@ def dfs(time_series):
     N = len(time_series)
     if N % 2 == 0:
         N = N[0:-1]
-    elif len(N) == 1:
+    elif N == 1:
         print("length must be greater than 1")
 
     # Ensure that time_series is a column vector
@@ -28,7 +28,7 @@ def dfs(time_series):
     j = np.arange(0, N)
 
     # Calculate the coefficients at each frequenctime_series
-    G = np.zeros((2, int((N-1)/2)))
+    G = np.zeros((int((N-1)/2),2))
     # 2 = sin, cos
     # N = number of timesteps (5)
     # k_max = int(N-1)/2 = maximum harmonic number
@@ -46,7 +46,7 @@ def dfs(time_series):
     return alpha, beta, power
 
 
-Y = np.array([1, 2, 3, 4, 5])
+Y = np.array([1, 2, 3, 4, 5, 6, 7])
 
 alpha, beta, power = dfs(Y)
 
