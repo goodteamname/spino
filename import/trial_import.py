@@ -5,9 +5,6 @@ import numpy as np
 import pandas as pd
 import os
 
-# Importing test_timeseries.csv.
-df = pd.read_csv('./data/test_timeseries.csv', delimiter=',')
-
 # Create file_name string variable.
 file_name = './data/test_timeseries.csv'
 # Determine file extension, while ignoring name output using _.
@@ -27,7 +24,6 @@ def import_file(file):
 
     # Determine file extension, while ignoring file name output using _.
     _, extension = os.path.splitext(file)
-    print(extension)
     return eval(imp[extension])
 
 
