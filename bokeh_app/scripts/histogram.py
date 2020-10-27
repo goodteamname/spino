@@ -5,12 +5,8 @@ import pandas as pd
 import numpy as np
 
 from bokeh.plotting import figure
-from bokeh.models import (CategoricalColorMapper, HoverTool, 
-						  ColumnDataSource, Panel, 
-						  FuncTickFormatter, SingleIntervalTicker, LinearAxis)
-from bokeh.models.widgets import (CheckboxGroup, Slider, RangeSlider, 
-								  Tabs, CheckboxButtonGroup, 
-								  TableColumn, DataTable, Select)
+from bokeh.models import (CategoricalColorMapper, HoverTool, ColumnDataSource, Panel, FuncTickFormatter, SingleIntervalTicker, LinearAxis)
+from bokeh.models.widgets import (CheckboxGroup, Slider, RangeSlider, Tabs, CheckboxButtonGroup, TableColumn, DataTable, Select)
 from bokeh.layouts import column, row, WidgetBox
 from bokeh.palettes import Category20_16
 
@@ -18,52 +14,54 @@ from bokeh.palettes import Category20_16
 def histogram_tab(ts):
 
     # Find maximum range of ts.
-    ts_range = ts.apply(lambda x: x.max()-x.min())
+    print(ts)
+    ts_range = ts.apply(lambda x: x.max() - x.min())
     range_max = ts_range.max()
 
-    # Function to make a dataset for histogram based on a list of timeseries
-	# and default histogram bin width.
+    # Function to make a dataset for histogram based on a list of timeseries and default histogram bin width.
     def make_dataset(timeseries_list, bin_width = 5):
-		# Dataframe to hold information
-	    df_to_plot = pd.DataFrame(columns=['proportion', 'left', 'right', 
-										    'f_proportion', 'f_interval',
-										    'name', 'color'])
+        # Dataframe to hold information
+        df_to_plot = pd.DataFrame(columns=['proportion', 'left', 'right', 
+                                            'f_proportion', 'f_interval',
+                                            'name', 'color'])
 
-		# Iterate through all the carriers
-	    for i, timeseries_name in enumerate(timeseries_list):
 
-			# Subset to the carrier
-		    subset = ts[timeseries_name]
+        # Iterate through all the carriers
+        for i, timeseries_name in enumerate(timeseries_list):
+            # Subset to the carrier
+            subset = ts[timeseries_name]
 
-			# Create a histogram with default 5 minute bins
-		    arr_hist, edges = np.histogram(subset, 
-										   bins = int(range_max / bin_width))
+            # Create a histogram with default 5 minute bins
+            print(subset)
+            print(range_max)
+            print(bin_width)
+            arr_hist, edges = np.histogram(subset, bins=int(range_max / bin_width))
 
-			# Divide the counts by the total to get a proportion
-		    arr_df = pd.DataFrame({'proportion': arr_hist / np.sum(arr_hist), 'left': edges[:-1], 'right': edges[1:] })
+            # Divide the counts by the total to get a proportion
+            arr_df = pd.DataFrame({'proportion': arr_hist / np.sum(arr_hist), 'left': edges[:-1], 'right': edges[1:] })
 
-			# Format the proportion 
-		    arr_df['f_proportion'] = ['%0.5f' % proportion for proportion in arr_df['proportion']]
+            # Format the proportion 
+            arr_df['f_proportion'] = ['%0.5f' % proportion for proportion in arr_df['proportion']]
 
-			# Format the interval
-		    arr_df['f_interval'] = ['%d to %d units' % (left, right) for left, right in zip(arr_df['left'], arr_df['right'])]
+            # Format the interval
+            arr_df['f_interval'] = ['%d to %d units' % (left, right) for left, right in zip(arr_df['left'], arr_df['right'])]
 
-			# Assign the carrier for labels
-		    arr_df['name'] = timeseries_name
+            # Assign the carrier for labels
+            arr_df['name'] = timeseries_name
 
-			# Color each carrier differently
-		    arr_df['color'] = Category20_16[i]
+            # Color each carrier differently
+            arr_df['color'] = Category20_16[i]
 
-			# Add to the overall dataframe
-		    df_to_plot = df_to_plot.append(arr_df)
+            # Add to the overall dataframe
+            df_to_plot = df_to_plot.append(arr_df)
 
-		# Overall dataframe
-	    df_to_plot = df_to_plot.sort_values(['name', 'left'])
+        # Overall dataframe
+        df_to_plot = df_to_plot.sort_values(['name', 'left'])
 
-	    return ColumnDataSource(df_to_plot)
+        return ColumnDataSource(df_to_plot)
 
     def style(p):
-        # Title 
+        #Title
         p.title.align = 'center'
         p.title.text_font_size = '20pt'
         p.title.text_font = 'serif'

@@ -14,7 +14,7 @@ from scripts.histogram import histogram_tab
 
 # Read data into dataframes
 # Import data.
-ts = pd.read_csv("./data/test_timeseries.csv", delimiter=",", names=['time', 'y1', 'y2', 'y3'])
+ts = pd.read_csv("./bokeh_app/data/test_timeseries.csv", skiprows=1, delimiter=",", names=['time', 'y1', 'y2', 'y3'])
 ts.set_index('time', inplace=True, drop=True)
 
 # Create each of the tabs
