@@ -37,4 +37,23 @@ plt.plot(df.time, detrended, label='detrended')
 plt.legend()
 plt.show()
 
+
 # Remove seasonality of a set period
+def remove_seasonality(df, T):
+    T_ind = np.argmin(abs(df.time-T))
+
+    diffs = list()
+    for i in range(T_ind, len(df.y)):
+        diff = df.y[i] - df.y[i-T_ind]
+        diffs.append(diff)
+
+    return diffs  # Length is shorter by T_ind
+
+
+diffs = remove_seasonality(df, 2*np.pi)
+
+plt.figure()
+plt.plot(df.time, df.y, label='data')
+plt.plot(df.time[T_ind:], diffs, label='detrended')
+plt.legend()
+plt.show()
