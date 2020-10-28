@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import scipy.interpolate
 
 
 def dft(time_series):
@@ -139,9 +140,12 @@ def fourier_approx(alpha0, alpha, beta, data, k = 0):
             + beta*np.sin(2.*np.pi*k/N * j))
     return y
 
-def calc_residuals(alpha0, table, data, data_times, components=10):
+def calc_residuals(alpha0, table, data, data_times, components=0):
     # time series
     # top 5 components
+    if components == 0:
+        components = optimise_residuals(alpha0, table, data)
+    print('back to calc residuals')
     top_indices = np.argsort(np.array(table.power))[-components:]
     top_alpha = [table.alpha[i] for i in top_indices]
     top_beta = [table.beta[i] for i in top_indices]
@@ -161,6 +165,27 @@ def calc_residuals(alpha0, table, data, data_times, components=10):
         plt.plot(y)
     plt.show()
 
+def optimise_residuals(alpha0, table, data):
+    print('optimising residuals')
+    mean_residual = []
+    x = np.arange(1, 30)#np.arange(1, len(table.power), 1)
+    for components in x:
+        print(components)
+        top_indices = np.argsort(np.array(table.power))[-components:]
+        top_alpha = [table.alpha[i] for i in top_indices]
+        top_beta = [table.beta[i] for i in top_indices]
+        approximation = fourier_approx(alpha0, top_alpha, top_beta, data, top_indices+1)
+        residual = data - approximation
+        mean_residual.append(np.mean(abs(residual)))
+    diff = np.gradient(np.gradient(mean_residual))
+    sorted_indices = np.argsort(diff)
+    for i in sorted_indices:
+        if mean_residual[i]<1:
+            best_index = i
+            break
+    return best_index
+
+
 dataframe = pd.read_csv('data/test_timeseries_noisy.csv')
 data = dataframe.values.tolist()
 data = np.array(data)
@@ -168,8 +193,7 @@ data = np.array(data)
 test_time = data[:, -2]
 test_data = data[:, -1]
 alpha0, table = dfs(test_data)
-calc_residuals(alpha0, table, test_data, test_time)
-
+calc_residuals(alpha0, table, test_data, test_time, 0)
 '''plt.plot(test_data)
 plt.plot(fourier_approx(alpha0, table.alpha, table.beta, test_data))
 plt.show()'''
