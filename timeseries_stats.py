@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Import temporary test data as pandas df
-df = pd.read_csv(os.getcwd() + '/spino/data/linear_trend_test_timeseries.csv')
+df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries.csv')
 
 
 def remove_trend(df, N):
@@ -46,14 +46,16 @@ def remove_seasonality(df, T):
     for i in range(T_ind, len(df.y)):
         diff = df.y[i] - df.y[i-T_ind]
         diffs.append(diff)
-
-    return diffs  # Length is shorter by T_ind
+    
+    
+    diff_df = pd.DataFrame(np.array(df.time[T_ind:], diffs), columns=['time', 'y'])
+    return diff_df  # Length is shorter by T_ind
 
 
 diffs = remove_seasonality(df, 2*np.pi)
 
 plt.figure()
 plt.plot(df.time, df.y, label='data')
-plt.plot(df.time[T_ind:], diffs, label='detrended')
+plt.plot(diffs.time, diffs.y, label='detrended')
 plt.legend()
 plt.show()
