@@ -26,7 +26,7 @@ def histogram_tab(ts):
                                             'name', 'color'])
 
 
-        # Iterate through all the carriers
+        # Iterate through all the TS.
         for i, timeseries_name in enumerate(timeseries_list):
             # Subset to the carrier
             subset = ts[timeseries_name]
@@ -139,13 +139,13 @@ def histogram_tab(ts):
     src = make_dataset(initial_ts, bin_width = binwidth_select.value)
 
     p = make_plot(src)
-	
+
 	# Put controls in a single element.
     controls = WidgetBox(ts_selection, binwidth_select)
-	
+
 	# Create a row layout
     layout = row(controls, p)
-	
+
 	# Make a tab with the layout 
     tab = Panel(child=layout, title = 'Histogram')
 

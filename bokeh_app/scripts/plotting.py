@@ -14,6 +14,46 @@ from bokeh.palettes import Category20_16
 # Make plot with histogram and return tab
 def plotting_tab(ts):
 
+    def make_dataset(timeseries_list):
+
+        df_to_plot = pd.DataFrame(columns=['values', 'time',
+                                            'f_value', 'f_time',
+                                            'name', 'color'])
+
+        # Iterate through all the TS.
+        for i, timeseries_name in enumerate(timeseries_list):
+            # Subset to the carrier
+            subset = ts[timeseries_name]
+
+            # Define values.
+            arr_df = pd.DataFrame({'values': subset, 'time': ts.index.tolist() })
+
+            # Format the values
+            arr_df['f_value'] = ['%0.2f' % values for values in arr_df['values']]
+
+            # Format the interval
+            arr_df['f_time'] = ['%0.2f' % time for time in arr_df['time']]
+
+            # Assign the carrier for labels
+            arr_df['name'] = timeseries_name
+
+            # Color each carrier differently
+            arr_df['color'] = Category20_16[i]
+
+            # Add to the overall dataframe
+            df_to_plot = df_to_plot.append(arr_df)
+
+        # Overall dataframe
+        df_to_plot = df_to_plot.sort_values('name')
+
+        return ColumnDataSource(df_to_plot)
+
+    # For extra functionality.
+    # if distribution == 'Smoothed':
+    #     window, order = 51, 3
+    #     for key in STATISTICS:
+    #         df[key] = savgol_filter(df[key], window, order)
+
     def style(p):
         # Title
         p.title.align = 'center'
@@ -39,13 +79,13 @@ def plotting_tab(ts):
                     x_axis_label='Time', y_axis_label='Variable')
 
         # line glyphs to create a multiple line plots.
-        for i, timeseries_name in enumerate(src.columns.tolist()):
-            p.line(x=ts.index.tolist(), y=src[timeseries_name], legend_label=timeseries_name, color=ts_colors[i], line_width=2)
+        p.quad(top='values', bottom=0, source=src, hover_fill_color = 'color', legend_label= 'name',
+                hover_fill_alpha = 1.0, line_color = 'color')
 
         # Hover tool with vline mode
         hover = HoverTool(tooltips=[('Times Series', '@name'), 
-                                    ('Time', '@x'),
-                                    ('Value', '@y')],
+                                    ('Time', '@f_time'),
+                                    ('Value', '@f_value')],
                             mode='vline')
 
         p.add_tools(hover)
@@ -58,10 +98,9 @@ def plotting_tab(ts):
     def update(attr, old, new):
         ts_to_plot = [ts_selection.labels[i] for i in ts_selection.active]
 
-        src = ts[ts_to_plot]
+        new_src = make_dataset(ts_to_plot)
 
-        return src
-	    # src.data.update(new_src.data)
+        src.data.update(new_src.data)
 
 
     # Widgets for interactivity.
@@ -74,8 +113,10 @@ def plotting_tab(ts):
     ts_selection = CheckboxGroup(labels=available_ts, active=[0, 1])
     ts_selection.on_change('active', update)
 
-    # Initial dataframe.
-    src = ts[available_ts]
+	# Initial ts and data source
+    initial_ts = [ts_selection.labels[i] for i in ts_selection.active]
+
+    src = make_dataset(initial_ts)
 
     p = make_lineplot(src)
 
