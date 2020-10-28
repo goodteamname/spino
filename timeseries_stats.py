@@ -9,6 +9,9 @@ import numpy as np
 # Import temporary test data as pandas df
 df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv')
 
+ts = pd.read_csv("bokeh_app/data/test_timeseries.csv", skiprows=1, delimiter=",", names=['time', 'y1', 'y2', 'y3'])
+ts.set_index('time', inplace=True, drop=True)
+print(ts)
 
 def remove_trend(df, N):
     """Remove a best fitting polynomial of degree N from time series data.
@@ -102,6 +105,16 @@ def rolling_stats(df, window):
     return df_stats
 
 
+def rolling_std(df, window):
+    return
+
+
+def rolling_mean(df, window):
+    df_mean = df.rolling(window).mean()
+    df_mean["time"] = df["time"]
+    return df_mean
+
+
 df_stats = rolling_stats(df, 10)
 
 plt.figure()
@@ -110,3 +123,5 @@ plt.plot(df_stats.time, df_stats.rollMean, label='rolling mean')
 plt.plot(df_stats.time, df_stats.rollVar, label='rolling variance')
 plt.legend()
 plt.show()
+
+print(rolling_mean(df, 5))
