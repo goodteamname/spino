@@ -16,6 +16,7 @@ def dfs(time_series):
     #     F.power  = normalised power-spectrum of the time-series
 
     # Check length of time-series.  Must be odd and longer than 1
+
     N = len(time_series)
     print(N)
     if N % 2 == 0:
@@ -26,7 +27,7 @@ def dfs(time_series):
         raise ValueError("ValueError: length must be greater than 1")
 
     # Ensure that time_series is a column vector
-    if len(time_series.shape) != 1:
+    if len(np.array(time_series).shape) != 1:
         print('needs to be 1D')
 
     # Create index of time-series entries
@@ -68,7 +69,6 @@ print(dataframe)
 data = dataframe.values.tolist()
 data = np.array(data)
 test_data = data[:, -1]
-test_data = [0]
 table = dfs(test_data)
 
 print(table)
