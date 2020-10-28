@@ -43,16 +43,32 @@ plt.show()
 
 # Remove seasonality of a set period
 def remove_seasonality(df, T):
-    T_ind = np.argmin(abs(df.time-T))
+    """Remove periodic repetition of period T from time series data.
+
+    Uses differencing methods to compare equivalent points in different periods
+    e.g. signal = data_[i] - data_[i-T]
+    This reduces duration of time series by T.
+
+    :param df: Time series data as a pandas DataFrame.
+    :param T: Period of seasonality to be removed.
+    :return diff_df: DataFrame with axes "time" and "y", corresponding
+        to new time array and deseasonalised time series respectively.
+    """
+
+    T_ind = np.argmin(abs(df.time-T)) # Find index in time array closest to T
 
     diffs = list()
-    for i in range(T_ind, len(df.y)):
+    for i in range(T_ind, len(df.y)): # Begin differencing after 1 full period
         diff = df.y[i] - df.y[i-T_ind]
         diffs.append(diff)
 
+    # Store time (from T_ind to end) and deseasonalised data in DataFrame
+    # Note: reset indices for time to start at 0, not T_ind for
+    # consistency with deseasonalised data
     data = [df["time"][T_ind:].reset_index(drop=True), pd.Series(diffs)]
     headers = ["time", "y"]
     diff_df = pd.concat(data, axis=1, keys=headers)
+
     return diff_df  # Length is shorter by T_ind
 
 
@@ -66,17 +82,27 @@ plt.show()
 
 
 def rolling_mean(df, window):
+    """Calculate rolling mean of time series data using specified window.
+
+    Uses pandas.rolling methods to find rolling mean
+    and returns this in a DataFrame with time array.
+
+    :param df: Time series data as a pandas DataFrame.
+    :param window: Size of window to be averaged over (int).
+    :return df_mean: DataFrame with axes "time" and "y", corresponding
+        to time array and rolling mean respectively.
+    """
     mean = df["y"].rolling(window).mean()
-    print(mean)
+    # Store result in a DataFrame
     data = [df["time"], pd.Series(mean)]
     headers = ["time", "y"]
     df_mean = pd.concat(data, axis=1, keys=headers)
+
     return df_mean
 
 
 df_mean = rolling_mean(df, 200)
-print(df_mean.time)
-print(df_mean.y)
+
 plt.figure()
 plt.plot(df.time, df.y, label='data')
 plt.plot(df_mean.time, df_mean.y, label='rolling mean')
