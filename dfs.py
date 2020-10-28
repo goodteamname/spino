@@ -4,16 +4,17 @@ import matplotlib.pyplot as plt
 
 
 def dfs(time_series):
-    # DFS   Discrete Fourier series
-    #   DFS(time_series) computes the Discrete Fourier series of an input
-    #   time-series time_series.
-    # time_series must be a vector with a length N that
-    #   is greater than 1 and odd in number.  F=DFS(time_series) returns a
-    #   structure F as follows:
-    #     F.alpha0 = mean of the time-series
-    #     F.alpha  = coefficients of cosine terms for k=1:(N-1)/2
-    #     F.beta   = coefficients of the sine terms for k=1:(N-1)/2
-    #     F.power  = normalised power-spectrum of the time-series
+    '''DFS   Discrete Fourier series
+    DFS(time_series) computes the Discrete Fourier series of an input
+    time-series -- time_series.
+
+    :param time_series:  must be a vector with a length N that is >1 and odd.
+    :returns alpha0:mean of the time-series
+    :returns table: a pandas dataframe containging alpha, beta, power
+        table.alpha  = coefficients of cosine terms for k=1:(N-1)/2
+        table.beta   = coefficients of the sine terms for k=1:(N-1)/2
+        table.power  = normalised power-spectrum of the time-series
+    '''
 
     # Check length of time-series.  Must be odd and longer than 1
 
@@ -51,31 +52,38 @@ def dfs(time_series):
     power = 0.5 * (alpha.T**2 + beta.T**2)/np.var(time_series, ddof=1)
     d = {'alpha': alpha, 'beta': beta, 'power': power}
     table = pd.DataFrame(d)
-    return table
+    return alpha0, table
 
 
-def fourier_approx(alpha, beta, data):
+def fourier_approx(alpha0, alpha, beta, data):
+    ''' fourier_approx
+    calculates approximated data values 
+
+    :param alpha0: mean of time series
+    :param alpha: coefficients of cosine terms for k=1:(N-1)/2
+    :param beta: coefficients of the sine terms for k=1:(N-1)/2
+    :param data: 1 time-series of data 
+    :return y: approximated time series
+    '''
     N = len(data)
     k = np.arange(1, len(alpha)+1)
-    alpha0 = np.mean(data)
     y = np.zeros(N)
     for j in range(N):
-        y[j] = alpha0 + np.sum(alpha*np.cos(2.*np.pi*k/N * j) + beta*np.sin(2.*np.pi*k/N * j))
+        y[j] = alpha0 + np.sum(
+                    alpha*np.cos(2.*np.pi*k/N * j)
+                    + beta*np.sin(2.*np.pi*k/N * j))
     return y
 
 
-dataframe = pd.read_csv('data/test_timeseries.csv')
+dataframe = pd.read_csv('data/test_timeseries_noisy.csv')
 print(dataframe)
 data = dataframe.values.tolist()
 data = np.array(data)
+# This is where you pass it the appropriate data
+# currently only works on 2 column data
 test_data = data[:, -1]
-table = dfs(test_data)
-
-print(table)
-print(table.alpha)
-print(table.beta)
-print(table.power)
+alpha0, table = dfs(test_data)
 
 plt.plot(test_data)
-plt.plot(fourier_approx(table.alpha, table.beta, test_data))
+plt.plot(fourier_approx(alpha0, table.alpha, table.beta, test_data))
 plt.show()
