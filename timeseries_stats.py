@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Import temporary test data as pandas df
-df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries.csv')
+df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv')
 
 
 def remove_trend(df, N):
@@ -25,15 +25,18 @@ def remove_trend(df, N):
     trend_coeffs = np.polyfit(df.time, df.y, deg=N)
     fit = np.polyval(trend_coeffs, df.time)
     detrended = df.y - fit
-    return detrended, fit
+    data = [df.time, pd.Series(detrended), pd.Series(fit)]
+    headers = ["time", "y", "fit"]
+    df_detrended = pd.concat(data, axis=1, keys=headers)
+    return df_detrended
 
 
-detrended, fit = remove_trend(df, 1)
+df_detrended = remove_trend(df, 1)
 
 plt.figure()
 plt.plot(df.time, df.y, label='data')
-plt.plot(df.time, fit, label='fit')
-plt.plot(df.time, detrended, label='detrended')
+plt.plot(df_detrended.time, df_detrended.fit, label='fit')
+plt.plot(df_detrended.time, df_detrended.y, label='detrended')
 plt.legend()
 plt.show()
 
@@ -46,9 +49,10 @@ def remove_seasonality(df, T):
     for i in range(T_ind, len(df.y)):
         diff = df.y[i] - df.y[i-T_ind]
         diffs.append(diff)
-    
-    
-    diff_df = pd.DataFrame(np.array(df.time[T_ind:], diffs), columns=['time', 'y'])
+
+    data = [df["time"][T_ind:].reset_index(drop=True), pd.Series(diffs)]
+    headers = ["time", "y"]
+    diff_df = pd.concat(data, axis=1, keys=headers)
     return diff_df  # Length is shorter by T_ind
 
 
@@ -57,5 +61,24 @@ diffs = remove_seasonality(df, 2*np.pi)
 plt.figure()
 plt.plot(df.time, df.y, label='data')
 plt.plot(diffs.time, diffs.y, label='detrended')
+plt.legend()
+plt.show()
+
+
+def rolling_mean(df, window):
+    mean = df["y"].rolling(window).mean()
+    print(mean)
+    data = [df["time"], pd.Series(mean)]
+    headers = ["time", "y"]
+    df_mean = pd.concat(data, axis=1, keys=headers)
+    return df_mean
+
+
+df_mean = rolling_mean(df, 200)
+print(df_mean.time)
+print(df_mean.y)
+plt.figure()
+plt.plot(df.time, df.y, label='data')
+plt.plot(df_mean.time, df_mean.y, label='rolling mean')
 plt.legend()
 plt.show()
