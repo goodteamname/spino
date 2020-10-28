@@ -102,6 +102,16 @@ def rolling_stats(df, window):
     return df_stats
 
 
+def rolling_std(df, window):
+    return
+
+
+def rolling_mean(df, window):
+    df_mean = df.rolling(window).mean()
+    df_mean["time"] = df["time"]
+    return df_mean
+
+
 df_stats = rolling_stats(df, 10)
 
 plt.figure()
@@ -110,3 +120,5 @@ plt.plot(df_stats.time, df_stats.rollMean, label='rolling mean')
 plt.plot(df_stats.time, df_stats.rollVar, label='rolling variance')
 plt.legend()
 plt.show()
+
+print(rolling_mean(df, 5))
