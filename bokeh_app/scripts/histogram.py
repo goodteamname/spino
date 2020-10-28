@@ -123,10 +123,10 @@ def histogram_tab(ts):
     ts_colors = Category20_16
     # ts_colors.sort()
 
-    ts_selection = CheckboxGroup(labels=available_ts, active = [0, 1])
+    ts_selection = CheckboxButtonGroup(labels=available_ts, active = [0, 1])
     ts_selection.on_change('active', update)
 
-    binwidth_select = Slider(start = 1, end = 30, 
+    binwidth_select = Slider(start = 1, end = 10, 
 							 step = 1, value = 5,
 							 title = 'Bin Width (units)')
     binwidth_select.on_change('value', update)

@@ -10,7 +10,7 @@ from bokeh.models.widgets import Tabs
 
 
 # Each tab is drawn by one script
-from scripts.histogram import histogram_tab
+from scripts.plotting import plotting_tab
 
 # Read data into dataframes
 # Import data.
@@ -18,7 +18,7 @@ ts = pd.read_csv("./bokeh_app/data/test_timeseries.csv", skiprows=1, delimiter="
 ts.set_index('time', inplace=True, drop=True)
 
 # Create each of the tabs
-tab1 = histogram_tab(ts)
+tab1 = plotting_tab(ts)
 
 # Put all the tabs into one application
 tabs = Tabs(tabs=[tab1])
