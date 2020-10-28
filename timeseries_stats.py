@@ -55,10 +55,10 @@ def remove_seasonality(df, T):
         to new time array and deseasonalised time series respectively.
     """
 
-    T_ind = np.argmin(abs(df.time-T)) # Find index in time array closest to T
+    T_ind = np.argmin(abs(df.time-T))  # Find index in time array closest to T
 
     diffs = list()
-    for i in range(T_ind, len(df.y)): # Begin differencing after 1 full period
+    for i in range(T_ind, len(df.y)):  # Begin differencing after 1 full period
         diff = df.y[i] - df.y[i-T_ind]
         diffs.append(diff)
 
@@ -81,7 +81,7 @@ plt.legend()
 plt.show()
 
 
-def rolling_mean(df, window):
+def rolling_stats(df, window):
     """Calculate rolling mean of time series data using specified window.
 
     Uses pandas.rolling methods to find rolling mean
@@ -93,18 +93,20 @@ def rolling_mean(df, window):
         to time array and rolling mean respectively.
     """
     mean = df["y"].rolling(window).mean()
+    var = df["y"].rolling(window).var()
     # Store result in a DataFrame
-    data = [df["time"], pd.Series(mean)]
-    headers = ["time", "y"]
-    df_mean = pd.concat(data, axis=1, keys=headers)
+    data = [df["time"], pd.Series(mean), pd.Series(var)]
+    headers = ["time", "rollMean", "rollVar"]
+    df_stats = pd.concat(data, axis=1, keys=headers)
 
-    return df_mean
+    return df_stats
 
 
-df_mean = rolling_mean(df, 200)
+df_stats = rolling_stats(df, 10)
 
 plt.figure()
 plt.plot(df.time, df.y, label='data')
-plt.plot(df_mean.time, df_mean.y, label='rolling mean')
+plt.plot(df_stats.time, df_stats.rollMean, label='rolling mean')
+plt.plot(df_stats.time, df_stats.rollVar, label='rolling variance')
 plt.legend()
 plt.show()
