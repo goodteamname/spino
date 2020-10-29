@@ -1,19 +1,18 @@
-# Very rough first attempt at detrending, deseasonalising data
-
-# Expect input as a pandas df
 import pandas as pd
-import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Import temporary test data as pandas df
-df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv')
+ts = pd.read_csv(
+    "bokeh_app/data/test_timeseries.csv",
+    skiprows=1,
+    delimiter=",",
+    names=['time', 'y1', 'y2', 'y3']
+)
 
-ts = pd.read_csv("bokeh_app/data/test_timeseries.csv", skiprows=1, delimiter=",", names=['time', 'y1', 'y2', 'y3'])
-ts.set_index('time', inplace=True, drop=True)
-print(ts)
+ts = ts.truncate(after=999)  # cannot handle NaN in remove_trend
 
-def remove_trend(df, N):
+
+def remove_trend(ts, N):
     """Remove a best fitting polynomial of degree N from time series data.
 
     Uses numpy methods polyfit to find the coefficients of a degree N
@@ -25,27 +24,30 @@ def remove_trend(df, N):
     :return detrended: df.y with the best fitting polynomial subtracted off.
     :return fit: Array of values of the best fitting polynomial at each time.
     """
-    trend_coeffs = np.polyfit(df.time, df.y, deg=N)
-    fit = np.polyval(trend_coeffs, df.time)
-    detrended = df.y - fit
-    data = [df.time, pd.Series(detrended), pd.Series(fit)]
-    headers = ["time", "y", "fit"]
-    df_detrended = pd.concat(data, axis=1, keys=headers)
-    return df_detrended
+    headers = ['time']
+    data = [ts.time]
+    for col in np.delete(ts.columns.values, 0):
+        fit = np.polyval(np.polyfit(ts.time, ts[col], deg=N), ts.time)
+        detrended = ts[col]-fit
+        headers.append('detrended_' + col)
+        headers.append('fit_' + col)
+        data.append(pd.Series(detrended))
+        data.append(pd.Series(fit))
+    ts_detrended = pd.concat(data, axis=1, keys=headers)
+    return ts_detrended
 
 
-df_detrended = remove_trend(df, 1)
-
+ts_detrended = remove_trend(ts, 1)
 plt.figure()
-plt.plot(df.time, df.y, label='data')
-plt.plot(df_detrended.time, df_detrended.fit, label='fit')
-plt.plot(df_detrended.time, df_detrended.y, label='detrended')
+plt.plot(ts.time, ts.y2, label='data2')
+plt.plot(ts_detrended.time, ts_detrended.detrended_y2, label='detrended2')
+plt.plot(ts_detrended.time, ts_detrended.fit_y2, label='fit2')
 plt.legend()
 plt.show()
 
 
 # Remove seasonality of a set period
-def remove_seasonality(df, T):
+def remove_seasonality(ts, T):
     """Remove periodic repetition of period T from time series data.
 
     Uses differencing methods to compare equivalent points in different periods
@@ -58,70 +60,87 @@ def remove_seasonality(df, T):
         to new time array and deseasonalised time series respectively.
     """
 
-    T_ind = np.argmin(abs(df.time-T))  # Find index in time array closest to T
-
-    diffs = list()
-    for i in range(T_ind, len(df.y)):  # Begin differencing after 1 full period
-        diff = df.y[i] - df.y[i-T_ind]
-        diffs.append(diff)
-
-    # Store time (from T_ind to end) and deseasonalised data in DataFrame
-    # Note: reset indices for time to start at 0, not T_ind for
-    # consistency with deseasonalised data
-    data = [df["time"][T_ind:].reset_index(drop=True), pd.Series(diffs)]
-    headers = ["time", "y"]
-    diff_df = pd.concat(data, axis=1, keys=headers)
-
-    return diff_df  # Length is shorter by T_ind
+    T_ind = np.argmin(abs(ts.time-T))  # Find index in time array closest to T
+    forward = ts.truncate(before=T_ind)
+    backward = ts.truncate(after=ts.shape[0]-1-T_ind)
+    forward = forward.reset_index(drop=True)
+    backward = backward.reset_index(drop=True)
+    ts_diff = forward-backward
+    times = ts['time'][T_ind:].reset_index(drop=True)
+    ts_diff['time'] = times
+    return ts_diff
 
 
-diffs = remove_seasonality(df, 2*np.pi)
-
+ts_diff = remove_seasonality(ts, 2*np.pi)
 plt.figure()
-plt.plot(df.time, df.y, label='data')
-plt.plot(diffs.time, diffs.y, label='detrended')
+plt.plot(ts.time, ts.y2, label='data2')
+plt.plot(ts_diff.time, ts_diff.y2, label='de seasoned2')
 plt.legend()
 plt.show()
 
 
-def rolling_stats(df, window):
-    """Calculate rolling mean of time series data using specified window.
-
-    Uses pandas.rolling methods to find rolling mean
-    and returns this in a DataFrame with time array.
-
-    :param df: Time series data as a pandas DataFrame.
-    :param window: Size of window to be averaged over (int).
-    :return df_mean: DataFrame with axes "time" and "y", corresponding
-        to time array and rolling mean respectively.
-    """
-    mean = df["y"].rolling(window).mean()
-    var = df["y"].rolling(window).var()
-    # Store result in a DataFrame
-    data = [df["time"], pd.Series(mean), pd.Series(var)]
-    headers = ["time", "rollMean", "rollVar"]
-    df_stats = pd.concat(data, axis=1, keys=headers)
-
-    return df_stats
+def rolling_std(ts, window):
+    ts_std = ts.rolling(window).var()
+    ts_std = np.sqrt(ts_std)
+    ts_std["time"] = ts["time"]
+    return ts_std
 
 
-def rolling_std(df, window):
-    return
+def rolling_mean(ts, window):
+    ts_mean = ts.rolling(window).mean()
+    ts_mean["time"] = ts["time"]
+    return ts_mean
 
 
-def rolling_mean(df, window):
-    df_mean = df.rolling(window).mean()
-    df_mean["time"] = df["time"]
-    return df_mean
-
-
-df_stats = rolling_stats(df, 10)
-
+ts_mean = rolling_mean(ts, 20)
 plt.figure()
-plt.plot(df.time, df.y, label='data')
-plt.plot(df_stats.time, df_stats.rollMean, label='rolling mean')
-plt.plot(df_stats.time, df_stats.rollVar, label='rolling variance')
+plt.plot(ts.time, ts.y1, label='data1')
+plt.plot(ts.time, ts.y2, label='data2')
+plt.plot(ts.time, ts.y3, label='data3')
+plt.plot(ts_mean.time, ts_mean.y1, label='rolling mean 1')
+plt.plot(ts_mean.time, ts_mean.y2, label='rolling mean 2')
+plt.plot(ts_mean.time, ts_mean.y3, label='rolling mean 3')
 plt.legend()
 plt.show()
 
-print(rolling_mean(df, 5))
+ts_std = rolling_std(ts, 20)
+plt.figure()
+plt.plot(ts.time, ts.y2, label='data2')
+plt.plot(ts_std.time, ts_std.y2, label='rolling std 2')
+plt.legend()
+plt.show()
+
+
+def auto_corr(data, max_lag):
+    auto_corrs = []
+    lags = range(max_lag)
+    for lag in lags:
+        auto_corrs.append(pd.Series(data).autocorr(lag))
+    headers = ['lags', 'auto_corrs']
+    array = [pd.Series(lags), pd.Series(auto_corrs)]
+    return pd.concat(array, axis=1, keys=headers)
+
+
+auto = auto_corr(ts.y1, 600)
+plt.figure()
+plt.plot(auto.lags, auto.auto_corrs, label='autocorrelation')
+plt.legend()
+plt.show()
+
+
+def corr(data1, data2, max_lag):
+    corrs = []
+    lags = range(max_lag)
+    for lag in lags:
+        corr = data1.corr(pd.Series(data2).shift(periods=lag))
+        corrs.append(corr)
+    headers = ['lags', 'corrs']
+    array = [pd.Series(lags), pd.Series(corrs)]
+    return pd.concat(array, axis=1, keys=headers)
+
+
+correlations = corr(ts.y1, ts.y3, 600)
+plt.figure()
+plt.plot(correlations.lags, correlations.corrs, label='correlation')
+plt.legend()
+plt.show()
