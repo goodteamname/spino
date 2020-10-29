@@ -106,6 +106,7 @@ def spectral_tab(ts):
     component_select.on_change('value', update_data)
 
     # Initial state and plotting.
+
     source_q1 = ColumnDataSource(data=ts[['time', ts_available[0]]])
     source_q2 = ColumnDataSource(data=ts)
     source_q3 = ColumnDataSource(data=ts)
