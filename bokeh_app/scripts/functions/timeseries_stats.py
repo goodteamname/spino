@@ -21,14 +21,21 @@ def remove_trend(ts, N):
     Uses numpy methods polyfit to find the coefficients of a degree N
     polynomial of best fit (least squares resiuduals) and polyeval to
     construct the polynomial over the duration of the time series.
+    If more than one column of data in ts, returns trend and detrended
+    data for each data set.
 
-    :param df: Time series data as a pandas dataframe.
+    :param ts: Time series data as a pandas dataframe.
     :param N: Degree of polynomial trend to remove.
-    :return detrended: df.y with the best fitting polynomial subtracted off.
-    :return fit: Array of values of the best fitting polynomial at each time.
+    :return ts_detrended: timeseries composed of time column, and two
+        output result columns per input data column:
+        - fit_<data_col>: Array of values of the best fitting polynomial
+            at each time
+        - detrended_<data_col>: original data, with trend fit subtracted
     """
     headers = ['time']
     data = [ts.time]
+
+    # Calculate trend for each column of data (not including time column)
     for col in np.delete(ts.columns.values, 0):
         fit = np.polyval(np.polyfit(ts.time, ts[col], deg=N), ts.time)
         detrended = ts[col]-fit
@@ -36,7 +43,8 @@ def remove_trend(ts, N):
         headers.append('fit_' + col)
         data.append(pd.Series(detrended))
         data.append(pd.Series(fit))
-    ts_detrended = pd.concat(data, axis=1, keys=headers)
+
+    ts_detrended = pd.concat(data, axis=1, keys=headers)  # return DataFrame
     return ts_detrended
 
 
@@ -49,27 +57,35 @@ def remove_trend(ts, N):
 # plt.show()
 
 
-# Remove seasonality of a set period
 def remove_seasonality(ts, T):
     """Remove periodic repetition of period T from time series data.
 
-    Uses differencing methods to compare equivalent points in different periods
+    Uses differencing methods to compare equivalent points in different
+    periods,
     e.g. signal = data_[i] - data_[i-T]
-    This reduces duration of time series by T.
+    Note that this reduces duration of time series by T.
+    If more than one column of data in ts, returns deseasonalised
+    time series for each column.
 
-    :param df: Time series data as a pandas DataFrame.
+    :param ts: Time series data as a pandas DataFrame.
     :param T: Period of seasonality to be removed.
-    :return diff_df: DataFrame with axes "time" and "y", corresponding
-        to new time array and deseasonalised time series respectively.
+    :return ts_diff: DataFrame with same columns as ts but data
+        columns are now deseasonalised, and time column is correspondingly
+        shorter.
     """
 
     T_ind = np.argmin(abs(ts.time-T))  # Find index in time array closest to T
-    forward = ts.truncate(before=T_ind)
+
+    forward = ts.truncate(before=T_ind)  # Differencing
     backward = ts.truncate(after=ts.shape[0]-1-T_ind)
-    forward = forward.reset_index(drop=True)
+
+    forward = forward.reset_index(drop=True)  # So index starts at 0
     backward = backward.reset_index(drop=True)
     ts_diff = forward-backward
+
+    # Values before first period T are lost; reset time indices to start at 0
     times = ts['time'][T_ind:].reset_index(drop=True)
+
     ts_diff['time'] = times
     return ts_diff
 
@@ -83,15 +99,41 @@ def remove_seasonality(ts, T):
 
 
 def rolling_std(ts, window):
+    """Calculate rolling standard deviation of time series.
+
+    Uses pandas.DataFrame.rolling() to calculate rolling std
+    dev of a given window size.
+    If more than one column of data in ts, returns rolling std
+    dev using given window size for each column of data.
+    Returns nans for times before first window.
+
+    :param ts: Time series data as a pandas DataFrame.
+    :param window: Window size over which to calculate std dev (int).
+    :return ts_std: DataFrame with same columns as ts but with rolling
+        std dev in place of data column.
+    """
     ts_std = ts.rolling(window).var()
     ts_std = np.sqrt(ts_std)
-    ts_std["time"] = ts["time"]
+    ts_std["time"] = ts["time"]  # don't want std dev of time!
     return ts_std
 
 
 def rolling_mean(ts, window):
+    """Calculate rolling mean of time series.
+
+    Uses pandas.DataFrame.rolling() to calculate rolling mean
+    of a given window size.
+    If more than one column of data in ts, returns rolling mean
+    using given window size for each column of data.
+    Returns nans for times before first window.
+
+    :param ts: Time series data as a pandas DataFrame.
+    :param window: Window size over which to calculate mean (int).
+    :return ts_std: DataFrame with same columns as ts but with rolling
+        mean in place of data column.
+    """
     ts_mean = ts.rolling(window).mean()
-    ts_mean["time"] = ts["time"]
+    ts_mean["time"] = ts["time"]  # don't want mean of time!
     return ts_mean
 
 
@@ -115,11 +157,25 @@ def rolling_mean(ts, window):
 
 
 def auto_corr(data, max_lag):
+    """Calculate autocorrelation of time series for range of
+    lag values up to max_lag.
+
+    Uses pandas.Series.autocorr() to calculate autocorrelation
+    for a single column of data (i.e. a pandas.Series), for a
+    range of values up to max_lag
+
+    :param data: Time series data as a pandas Series.
+    :param max_lag: Index of maximum time lag to calculate
+        autocorrelation.
+    :return: DataFrame with lags column and autocorrelation
+        value at given lag.
+    """
     auto_corrs = []
     lags = range(max_lag)
     for lag in lags:
         auto_corrs.append(pd.Series(data).autocorr(lag))
     headers = ['lags', 'auto_corrs']
+    # Return as DataFrame:
     array = [pd.Series(lags), pd.Series(auto_corrs)]
     return pd.concat(array, axis=1, keys=headers)
 
@@ -132,12 +188,28 @@ def auto_corr(data, max_lag):
 
 
 def corr(data1, data2, max_lag):
-    # Note data2 is shifted relative to data1.
+    """Calculate correlation of two time series for a range
+    of lags between them.
+
+    Uses pandas.Series.corr() to calculate correlation between
+    two columns of data (i.e. a pandas.Series), with data2
+    shifted relative to data1 by a range of lags up to max_lag.
+
+    :param data1: Time series data as a pandas Series.
+    :param data2: Time series data as a pandas Series. This is
+        the series that is shifted relative to data1.
+    :param max_lag: Index of maximum time lag to calculate
+        correlation.
+    :return: DataFrame with lags column and correlation value
+         at given lag.
+    """
     corrs = []
     lags = range(max_lag)
+
     for lag in lags:
         corr = data1.corr(pd.Series(data2).shift(periods=lag))
         corrs.append(corr)
+
     headers = ['lags', 'corrs']
     array = [pd.Series(lags), pd.Series(corrs)]
     return pd.concat(array, axis=1, keys=headers)
