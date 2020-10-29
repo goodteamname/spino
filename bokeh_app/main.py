@@ -11,7 +11,7 @@ from bokeh.models.widgets import Tabs
 
 # Each tab is drawn by one script
 from scripts.timeseries_copy import timeseries_tab
-# from scripts.histogram import histogram_tab
+from scripts.spectral import spectral_tab
 
 # Read data into dataframes
 # Import data.
@@ -20,8 +20,10 @@ ts = pd.read_csv("./bokeh_app/data/test_timeseries_copy.csv", skiprows=1, delimi
 # Create each of the tabs
 tab1 = timeseries_tab(ts)
 
+tab4 = spectral_tab(ts)
+
 # Put all the tabs into one application
-tabs = Tabs(tabs=[tab1])
+tabs = Tabs(tabs=[tab1, tab4])
 
 # Put the tabs in the current document for display
 curdoc().add_root(tabs)
