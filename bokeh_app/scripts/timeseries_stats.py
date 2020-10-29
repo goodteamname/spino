@@ -2,14 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-ts = pd.read_csv(
-    "bokeh_app/data/test_timeseries.csv",
-    skiprows=1,
-    delimiter=",",
-    names=['time', 'y1', 'y2', 'y3']
-)
+# # Import temporary test data as pandas df
+# df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv')
 
-ts = ts.truncate(after=999)  # cannot handle NaN in remove_trend
+# ts = pd.read_csv("bokeh_app/data/test_timeseries.csv", skiprows=1, delimiter=",", names=['time', 'y1', 'y2', 'y3'])
+# ts.set_index('time', inplace=True, drop=True)
+# print(ts)
 
 
 def remove_trend(ts, N):
