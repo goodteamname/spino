@@ -39,12 +39,13 @@ def timeseries_tab(ts):
         if window_select.value == 0:
             pass
         else:
-            # method = [rolling_method.labels[i] for i in rolling_method.active]
-            # if method == "Mean"
-
-            # Function to apply moving average to pandas dataframe and export to CDS type.
-            ts_rmean = rolling_mean(ts, window=window_select.value)
-            new_source = ColumnDataSource(data=ts_rmean)
+            method = [rolling_method.labels[i] for i in rolling_method.active]
+            if method == "Mean":
+                # Function to apply moving average to pandas dataframe and export to CDS type.
+                ts_rmean = rolling_mean(ts, window=window_select.value)
+                new_source = ColumnDataSource(data=ts_rmean)
+            else:
+                
 
             source.data.update(new_source.data)
 
@@ -52,12 +53,13 @@ def timeseries_tab(ts):
     text = TextInput(title="title", value='Plot Name')
     text.on_change('value', update_title)
 
-    # rolling_labels = ["Mean", "Std. Dev."]
-    # rolling_method = RadioButtonGroup(labels=rolling_labels, active=0)
-    # rolling_method.on_change('active', update_window)
+    rolling_labels = ["Mean", "Std. Dev."]
+    rolling_method = RadioButtonGroup(labels=rolling_labels, active=0)
+    rolling_method.on_change('active', update_window)
 
     window_select = Slider(start=0, end=50, step=1, value=10, title='Window Size')
     window_select.on_change('value', update_window)
+############################################################################################
 
     source = ColumnDataSource(data=ts)
     plot = make_lineplot(source)
