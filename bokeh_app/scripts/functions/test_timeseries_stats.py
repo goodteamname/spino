@@ -1,17 +1,20 @@
 import pytest
-import os
 import pandas as pd
 
-df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv')
-
+ts = pd.read_csv(
+  "data/test_timeseries_copy.csv",
+  skiprows=1,
+  delimiter=",",
+  names=['time', 'y1', 'y2', 'y3']
+)
 
 @pytest.mark.parametrize(
 
     "data, expectedShape ",
     [
         (
-            df,
-            (df.shape[0], 3)
+            ts,
+            (ts.shape[0], 7)
         )
     ])
 def test_remove_trend(data, expectedShape):
