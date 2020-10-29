@@ -6,12 +6,12 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Import temporary test data as pandas df
-df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv')
+# # Import temporary test data as pandas df
+# df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv')
 
-ts = pd.read_csv("bokeh_app/data/test_timeseries.csv", skiprows=1, delimiter=",", names=['time', 'y1', 'y2', 'y3'])
-ts.set_index('time', inplace=True, drop=True)
-print(ts)
+# ts = pd.read_csv("bokeh_app/data/test_timeseries.csv", skiprows=1, delimiter=",", names=['time', 'y1', 'y2', 'y3'])
+# ts.set_index('time', inplace=True, drop=True)
+# print(ts)
 
 def remove_trend(df, N):
     """Remove a best fitting polynomial of degree N from time series data.
@@ -34,14 +34,14 @@ def remove_trend(df, N):
     return df_detrended
 
 
-df_detrended = remove_trend(df, 1)
+# df_detrended = remove_trend(df, 1)
 
-plt.figure()
-plt.plot(df.time, df.y, label='data')
-plt.plot(df_detrended.time, df_detrended.fit, label='fit')
-plt.plot(df_detrended.time, df_detrended.y, label='detrended')
-plt.legend()
-plt.show()
+# plt.figure()
+# plt.plot(df.time, df.y, label='data')
+# plt.plot(df_detrended.time, df_detrended.fit, label='fit')
+# plt.plot(df_detrended.time, df_detrended.y, label='detrended')
+# plt.legend()
+# plt.show()
 
 
 # Remove seasonality of a set period
@@ -75,13 +75,13 @@ def remove_seasonality(df, T):
     return diff_df  # Length is shorter by T_ind
 
 
-diffs = remove_seasonality(df, 2*np.pi)
+# diffs = remove_seasonality(df, 2*np.pi)
 
-plt.figure()
-plt.plot(df.time, df.y, label='data')
-plt.plot(diffs.time, diffs.y, label='detrended')
-plt.legend()
-plt.show()
+# plt.figure()
+# plt.plot(df.time, df.y, label='data')
+# plt.plot(diffs.time, diffs.y, label='detrended')
+# plt.legend()
+# plt.show()
 
 
 def rolling_stats(df, window):
@@ -115,13 +115,13 @@ def rolling_mean(df, window):
     return df_mean
 
 
-df_stats = rolling_stats(df, 10)
+# df_stats = rolling_stats(df, 10)
 
-plt.figure()
-plt.plot(df.time, df.y, label='data')
-plt.plot(df_stats.time, df_stats.rollMean, label='rolling mean')
-plt.plot(df_stats.time, df_stats.rollVar, label='rolling variance')
-plt.legend()
-plt.show()
+# plt.figure()
+# plt.plot(df.time, df.y, label='data')
+# plt.plot(df_stats.time, df_stats.rollMean, label='rolling mean')
+# plt.plot(df_stats.time, df_stats.rollVar, label='rolling variance')
+# plt.legend()
+# plt.show()
 
-print(rolling_mean(df, 5))
+# print(rolling_mean(df, 5))
