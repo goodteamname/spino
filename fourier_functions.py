@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import scipy.interpolate
 
 
-def dft(time_series):
+def dft(time_series): # don't call this
     '''DFT   Discrete Fourier transform
     DFS(time_series) computes the Discrete Fourier transform of an input
     time-series -- time_series.
@@ -34,7 +34,7 @@ def dft(time_series):
     return G
 
 
-def dfs(time_series):
+def dfs(time_series): #yes
     '''DFS   Discrete Fourier series
     DFS(time_series) computes the Discrete Fourier series of an input
     time-series -- time_series.
@@ -86,7 +86,7 @@ def dfs(time_series):
     return alpha0, table
 
 
-def fourier_to_freq_spectrum(time_series, test_time):
+def fourier_to_freq_spectrum(time_series, test_time): #yes
     '''fourier_to_freq_spectrum
     :param time_series: time-series data.
         must be a vector with a length N that is >1 and odd.
@@ -98,10 +98,11 @@ def fourier_to_freq_spectrum(time_series, test_time):
     abs_fourier_transform = np.abs(fourier_transform)
     power_spectrum = np.square(abs_fourier_transform)
     frequency = np.linspace(0, sampling_rate/2, len(power_spectrum))
+    # pd dataframe columns freq, power
     return frequency, power_spectrum
 
 
-def fourier_to_coefficients(time_series):
+def fourier_to_coefficients(time_series): #yes 
     '''
     :param time_series:  must be a vector with a length N that is >1 and odd.
     :returns alpha0: mean of the time-series
@@ -126,7 +127,7 @@ def fourier_to_coefficients(time_series):
     return alpha0, table
 
 
-def fourier_approx(alpha0, alpha, beta, data, k=[]):
+def fourier_approx(alpha0, table, data, k=[]): #yes, total approx
     ''' fourier_approx
     calculates approximated data values
 
@@ -135,17 +136,20 @@ def fourier_approx(alpha0, alpha, beta, data, k=[]):
     :param beta: coefficients of the sine terms for k=1:(N-1)/2
     :param data: 1 time-series of data
     :param k: harmonic numbers associated with alpha and beta
-    :return y: approximated time series
+    :return approximation: approximated time series
     '''
+    alpha = table.alpha
+    beta = table.beta
     N = len(data)
-    if k == []:
+    if len(k) == 0:
         k = np.arange(1, len(alpha)+1)
-    y = np.zeros(N)
+    approximation = np.zeros(N)
     for j in range(N):
-        y[j] = alpha0 + np.sum(
+        approximation[j] = alpha0 + np.sum(
             alpha*np.cos(2.*np.pi*k/N * j)
             + beta*np.sin(2.*np.pi*k/N * j))
-    return y
+    print(approximation[0])
+    return approximation
 
 
 def calc_residuals(alpha0, table, data, data_times, components=0):
@@ -159,10 +163,9 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
         If not entered then uses optimise_residuals to find best value to use.
     '''
     # time series
-    # top 5 components
     if components == 0:
         components = optimise_residuals(alpha0, table, data)
-    print('back to calc residuals')
+    print("number of components being used: "+ str(components))
     top_indices = np.argsort(np.array(table.power))[-components:]
     top_alpha = [table.alpha[i] for i in top_indices]
     top_beta = [table.beta[i] for i in top_indices]
@@ -178,21 +181,30 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
         )
     # difference
     residual = data-approximation
+    plt.plot(residual)
+    #time, data, residual column
+    plt.plot(data)
+    plt.show()
     # plot residual against components
     N = len(data)
-    plt.plot(approximation)
-    plt.plot(data)
+    # plt.plot(approximation)
+    # plt.plot(data)
+    top_components_for_approx = []
+    print(top_components_for_approx)
     for i in range(0, components):
-        y = (
+        print(i)
+        top_components_for_approx.append(
             alpha0
             + top_alpha[i]*np.cos(2.*np.pi*top_indices[i]/N * np.arange(0, N))
             + top_beta[i]*np.sin(2.*np.pi*top_indices[i]/N * np.arange(0, N))
         )
-        plt.plot(y)
-    plt.show()
+        print(top_components_for_approx)
+        #plt.plot(top_components_for_approx[i])
+    #plt.show()
+    #1 time, column per component
 
 
-def optimise_residuals(alpha0, table, data):
+def optimise_residuals(alpha0, table, data): #no
     '''optimise_residuals
     find the minimum number of components to use
         to suitably approximate the data
@@ -203,7 +215,7 @@ def optimise_residuals(alpha0, table, data):
     '''
     print('optimising residuals')
     mean_residual = []
-    x = np.arange(1, len(table.power), 1)
+    x = np.arange(1, len(table.power), 10)
     for components in x:
         print(components)
         top_indices = np.argsort(np.array(table.power))[-components:]
@@ -223,14 +235,18 @@ def optimise_residuals(alpha0, table, data):
     return best_index
 
 
-dataframe = pd.read_csv('data/test_timeseries_noisy.csv')
-data = dataframe.values.tolist()
-data = np.array(data)
+#dataframe = pd.read_csv('data/test_timeseries_noisy.csv')
+#data = dataframe.values.tolist()
+#data = np.array(data)
 # This is where you pass it the appropriate data
-test_time = data[:, 1]
-test_data = data[:, -1]
-alpha0, table = dfs(test_data)
-#calc_residuals(alpha0, table, test_data, test_time, 0)
-plt.plot(test_data)
-plt.plot(fourier_approx(alpha0, table.alpha, table.beta, test_data))
-plt.show()
+
+#given name of header of pd
+#test_time = data[:, 0]
+#test_data = data[:, -1]
+#alpha0, table = dfs(test_data)
+
+#calc_residuals(alpha0, table, test_data, test_time, 10)
+
+#plt.plot(test_data)
+#plt.plot(fourier_approx(alpha0, table.alpha, table.beta, test_data))
+#plt.show()
