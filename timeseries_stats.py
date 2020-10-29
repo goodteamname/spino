@@ -37,13 +37,13 @@ def remove_trend(ts, N):
     return ts_detrended
 
 
-# ts_detrended = remove_trend(ts, 1)
-# plt.figure()
-# plt.plot(ts.time, ts.y2, label='data2')
-# plt.plot(ts_detrended.time, ts_detrended.detrended_y2, label='detrended2')
-# plt.plot(ts_detrended.time, ts_detrended.fit_y2, label='fit2')
-# plt.legend()
-# plt.show()
+ts_detrended = remove_trend(ts, 1)
+plt.figure()
+plt.plot(ts.time, ts.y2, label='data2')
+plt.plot(ts_detrended.time, ts_detrended.detrended_y2, label='detrended2')
+plt.plot(ts_detrended.time, ts_detrended.fit_y2, label='fit2')
+plt.legend()
+plt.show()
 
 
 # Remove seasonality of a set period
@@ -71,12 +71,12 @@ def remove_seasonality(ts, T):
     return ts_diff
 
 
-# ts_diff = remove_seasonality(ts, 2*np.pi)
-# plt.figure()
-# plt.plot(ts.time, ts.y2, label='data2')
-# plt.plot(ts_diff.time, ts_diff.y2, label='de seasoned2')
-# plt.legend()
-# plt.show()
+ts_diff = remove_seasonality(ts, 2*np.pi)
+plt.figure()
+plt.plot(ts.time, ts.y2, label='data2')
+plt.plot(ts_diff.time, ts_diff.y2, label='de seasoned2')
+plt.legend()
+plt.show()
 
 
 def rolling_std(ts, window):
@@ -92,20 +92,55 @@ def rolling_mean(ts, window):
     return ts_mean
 
 
-# ts_mean = rolling_mean(ts, 20)
-# plt.figure()
-# plt.plot(ts.time, ts.y1, label='data1')
-# plt.plot(ts.time, ts.y2, label='data2')
-# plt.plot(ts.time, ts.y3, label='data3')
-# plt.plot(ts_mean.time, ts_mean.y1, label='rolling mean 1')
-# plt.plot(ts_mean.time, ts_mean.y2, label='rolling mean 2')
-# plt.plot(ts_mean.time, ts_mean.y3, label='rolling mean 3')
-# plt.legend()
-# plt.show()
+ts_mean = rolling_mean(ts, 20)
+plt.figure()
+plt.plot(ts.time, ts.y1, label='data1')
+plt.plot(ts.time, ts.y2, label='data2')
+plt.plot(ts.time, ts.y3, label='data3')
+plt.plot(ts_mean.time, ts_mean.y1, label='rolling mean 1')
+plt.plot(ts_mean.time, ts_mean.y2, label='rolling mean 2')
+plt.plot(ts_mean.time, ts_mean.y3, label='rolling mean 3')
+plt.legend()
+plt.show()
 
-# ts_std = rolling_std(ts, 20)
-# plt.figure()
-# plt.plot(ts.time, ts.y2, label='data2')
-# plt.plot(ts_std.time, ts_std.y2, label='rolling std 2')
-# plt.legend()
-# plt.show()
+ts_std = rolling_std(ts, 20)
+plt.figure()
+plt.plot(ts.time, ts.y2, label='data2')
+plt.plot(ts_std.time, ts_std.y2, label='rolling std 2')
+plt.legend()
+plt.show()
+
+
+def auto_corr(data, max_lag):
+    auto_corrs = []
+    lags = range(max_lag)
+    for lag in lags:
+        auto_corrs.append(pd.Series(data).autocorr(lag))
+    headers = ['lags', 'auto_corrs']
+    array = [pd.Series(lags), pd.Series(auto_corrs)]
+    return pd.concat(array, axis=1, keys=headers)
+
+
+auto = auto_corr(ts.y1, 600)
+plt.figure()
+plt.plot(auto.lags, auto.auto_corrs, label='autocorrelation')
+plt.legend()
+plt.show()
+
+
+def corr(data1, data2, max_lag):
+    corrs = []
+    lags = range(max_lag)
+    for lag in lags:
+        corr = data1.corr(pd.Series(data2).shift(periods=lag))
+        corrs.append(corr)
+    headers = ['lags', 'corrs']
+    array = [pd.Series(lags), pd.Series(corrs)]
+    return pd.concat(array, axis=1, keys=headers)
+
+
+correlations = corr(ts.y1, ts.y3, 600)
+plt.figure()
+plt.plot(correlations.lags, correlations.corrs, label='correlation')
+plt.legend()
+plt.show()
