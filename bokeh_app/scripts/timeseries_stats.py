@@ -130,7 +130,7 @@ def corr(data1, data2, max_lag):
     corrs = []
     lags = range(max_lag)
     for lag in lags:
-        corr = data1.corr(pd.Series(data2).shift(periods=lag))
+        corr = data1.corr(pd.Series(data2).shift(periods=lag)) # data2 is shifted relative to data1
         corrs.append(corr)
     headers = ['lags', 'corrs']
     array = [pd.Series(lags), pd.Series(corrs)]
