@@ -106,7 +106,9 @@ def rolling_stats(df, window):
 
 
 def rolling_std(df, window):
-    return
+    df_std = df.rolling(window).std()
+    df_std["time"] = df["time"]
+    return df_std
 
 
 def rolling_mean(df, window):

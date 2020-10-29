@@ -1,5 +1,5 @@
 # Import packages.
-from .timeseries_stats import rolling_mean
+from .timeseries_stats import rolling_mean, rolling_std
 from bokeh.io import curdoc
 from bokeh.plotting import figure
 from bokeh.models import (CategoricalColorMapper, HoverTool, ColumnDataSource, Panel, FuncTickFormatter, SingleIntervalTicker, LinearAxis)
@@ -37,29 +37,30 @@ def timeseries_tab(ts):
 
     def update_window(attrname, old, new):
         if window_select.value == 0:
-            pass
+
+            raw_source = ColumnDataSource(data=ts)
+            source.data.update(raw_source.data)
         else:
-            method = [rolling_method.labels[i] for i in rolling_method.active]
-            if method == "Mean":
-                # Function to apply moving average to pandas dataframe and export to CDS type.
+            if rolling_method.value == "Mean":
+                # Apply moving average to pandas dataframe and export to CDS type.
                 ts_rmean = rolling_mean(ts, window=window_select.value)
                 new_source = ColumnDataSource(data=ts_rmean)
             else:
-                
+                # Apply moving std to pandas dataframe and export to CDS type.
+                ts_rstd = rolling_std(ts, window=window_select.value)
+                new_source = ColumnDataSource(data=ts_rstd)
 
             source.data.update(new_source.data)
 
     # Set up widgets
-    text = TextInput(title="title", value='Plot Name')
+    text = TextInput(title="Title", value='Plot Name')
     text.on_change('value', update_title)
 
-    rolling_labels = ["Mean", "Std. Dev."]
-    rolling_method = RadioButtonGroup(labels=rolling_labels, active=0)
-    rolling_method.on_change('active', update_window)
+    rolling_method = Select(value='Mean', title='Statistic', options=['Mean', 'Std. Dev.'])
+    rolling_method.on_change('value', update_window)
 
-    window_select = Slider(start=0, end=50, step=1, value=10, title='Window Size')
+    window_select = Slider(start=0, end=50, step=1, value=0, title='Window Size')
     window_select.on_change('value', update_window)
-############################################################################################
 
     source = ColumnDataSource(data=ts)
     plot = make_lineplot(source)
@@ -67,7 +68,7 @@ def timeseries_tab(ts):
 
     # Set up layouts and add to document
     # Put controls in a single element.
-    controls = WidgetBox(text, window_select)
+    controls = WidgetBox(text, rolling_method, window_select)
 
     # Create a row layout
     layout = row(controls, plot)

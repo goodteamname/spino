@@ -10,7 +10,7 @@ from bokeh.models.widgets import Tabs
 
 
 # Each tab is drawn by one script
-from scripts.timeseries import timeseries_tab
+from scripts.timeseries_copy import timeseries_tab
 # from scripts.histogram import histogram_tab
 
 # Read data into dataframes
