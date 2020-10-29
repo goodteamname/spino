@@ -1,13 +1,18 @@
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 
 # # Import temporary test data as pandas df
-# df = pd.read_csv(os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv')
+# df = pd.read_csv(
+#   os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv'
+# )
 
-# ts = pd.read_csv("bokeh_app/data/test_timeseries.csv", skiprows=1, delimiter=",", names=['time', 'y1', 'y2', 'y3'])
-# ts.set_index('time', inplace=True, drop=True)
-# print(ts)
+# ts = pd.read_csv(
+#   "bokeh_app/data/test_timeseries.csv",
+#   skiprows=1,
+#   delimiter=",",
+#   names=['time', 'y1', 'y2', 'y3']
+# )
 
 
 def remove_trend(ts, N):
@@ -35,13 +40,13 @@ def remove_trend(ts, N):
     return ts_detrended
 
 
-ts_detrended = remove_trend(ts, 1)
-plt.figure()
-plt.plot(ts.time, ts.y2, label='data2')
-plt.plot(ts_detrended.time, ts_detrended.detrended_y2, label='detrended2')
-plt.plot(ts_detrended.time, ts_detrended.fit_y2, label='fit2')
-plt.legend()
-plt.show()
+# ts_detrended = remove_trend(ts, 1)
+# plt.figure()
+# plt.plot(ts.time, ts.y2, label='data2')
+# plt.plot(ts_detrended.time, ts_detrended.detrended_y2, label='detrended2')
+# plt.plot(ts_detrended.time, ts_detrended.fit_y2, label='fit2')
+# plt.legend()
+# plt.show()
 
 
 # Remove seasonality of a set period
@@ -69,12 +74,12 @@ def remove_seasonality(ts, T):
     return ts_diff
 
 
-ts_diff = remove_seasonality(ts, 2*np.pi)
-plt.figure()
-plt.plot(ts.time, ts.y2, label='data2')
-plt.plot(ts_diff.time, ts_diff.y2, label='de seasoned2')
-plt.legend()
-plt.show()
+# ts_diff = remove_seasonality(ts, 2*np.pi)
+# plt.figure()
+# plt.plot(ts.time, ts.y2, label='data2')
+# plt.plot(ts_diff.time, ts_diff.y2, label='de seasoned2')
+# plt.legend()
+# plt.show()
 
 
 def rolling_std(ts, window):
@@ -90,23 +95,23 @@ def rolling_mean(ts, window):
     return ts_mean
 
 
-ts_mean = rolling_mean(ts, 20)
-plt.figure()
-plt.plot(ts.time, ts.y1, label='data1')
-plt.plot(ts.time, ts.y2, label='data2')
-plt.plot(ts.time, ts.y3, label='data3')
-plt.plot(ts_mean.time, ts_mean.y1, label='rolling mean 1')
-plt.plot(ts_mean.time, ts_mean.y2, label='rolling mean 2')
-plt.plot(ts_mean.time, ts_mean.y3, label='rolling mean 3')
-plt.legend()
-plt.show()
+# ts_mean = rolling_mean(ts, 20)
+# plt.figure()
+# plt.plot(ts.time, ts.y1, label='data1')
+# plt.plot(ts.time, ts.y2, label='data2')
+# plt.plot(ts.time, ts.y3, label='data3')
+# plt.plot(ts_mean.time, ts_mean.y1, label='rolling mean 1')
+# plt.plot(ts_mean.time, ts_mean.y2, label='rolling mean 2')
+# plt.plot(ts_mean.time, ts_mean.y3, label='rolling mean 3')
+# plt.legend()
+# plt.show()
 
-ts_std = rolling_std(ts, 20)
-plt.figure()
-plt.plot(ts.time, ts.y2, label='data2')
-plt.plot(ts_std.time, ts_std.y2, label='rolling std 2')
-plt.legend()
-plt.show()
+# ts_std = rolling_std(ts, 20)
+# plt.figure()
+# plt.plot(ts.time, ts.y2, label='data2')
+# plt.plot(ts_std.time, ts_std.y2, label='rolling std 2')
+# plt.legend()
+# plt.show()
 
 
 def auto_corr(data, max_lag):
@@ -119,26 +124,27 @@ def auto_corr(data, max_lag):
     return pd.concat(array, axis=1, keys=headers)
 
 
-auto = auto_corr(ts.y1, 600)
-plt.figure()
-plt.plot(auto.lags, auto.auto_corrs, label='autocorrelation')
-plt.legend()
-plt.show()
+# auto = auto_corr(ts.y1, 600)
+# plt.figure()
+# plt.plot(auto.lags, auto.auto_corrs, label='autocorrelation')
+# plt.legend()
+# plt.show()
 
 
 def corr(data1, data2, max_lag):
+    # Note data2 is shifted relative to data1.
     corrs = []
     lags = range(max_lag)
     for lag in lags:
-        corr = data1.corr(pd.Series(data2).shift(periods=lag)) # data2 is shifted relative to data1
+        corr = data1.corr(pd.Series(data2).shift(periods=lag))
         corrs.append(corr)
     headers = ['lags', 'corrs']
     array = [pd.Series(lags), pd.Series(corrs)]
     return pd.concat(array, axis=1, keys=headers)
 
 
-correlations = corr(ts.y1, ts.y3, 600)
-plt.figure()
-plt.plot(correlations.lags, correlations.corrs, label='correlation')
-plt.legend()
-plt.show()
+# correlations = corr(ts.y1, ts.y3, 600)
+# plt.figure()
+# plt.plot(correlations.lags, correlations.corrs, label='correlation')
+# plt.legend()
+# plt.show()
