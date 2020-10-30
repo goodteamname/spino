@@ -248,7 +248,7 @@ def optimise_residuals(alpha0, table, data):  # no
     '''
     # print('optimising residuals')
     mean_residual = []
-    x = np.arange(1, len(table.power), 10)
+    x = np.arange(1, len(table.power), 1)
     for components in x:
         top_indices = np.argsort(np.array(table.power))[-components:]
         top_alpha = [table.alpha[i] for i in top_indices]
