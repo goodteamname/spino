@@ -18,12 +18,12 @@ def dft(time_series):  # don't call this
     '''
     N = len(time_series)
     if N % 2 == 0:
-        print('even')
+        # print('even')
         time_series = time_series[0:-1]
         N -= 1
     elif N <= 1:
         raise ValueError("ValueError: length must be greater than 1")
-    print(time_series)
+    # print(time_series)
     # Ensure that time_series is a column vector
     if len(np.array(time_series).shape) != 1:
         raise ValueError("ValueError: needs to be 1D")
@@ -49,9 +49,9 @@ def dfs(time_series):  # yes
     # Check length of time-series.  Must be odd and longer than 1
 
     N = len(time_series)
-    print(N)
+    # print(N)
     if N % 2 == 0:
-        print('even')
+        # print('even')
         time_series = time_series[0:-1]
         N -= 1
     elif N <= 1:
@@ -114,13 +114,13 @@ def fourier_to_coefficients(time_series):  # yes
     '''
     N = len(time_series)
     if N % 2 == 0:
-        print('even')
+        # print('even')
         time_series = time_series[0:-1]
         N -= 1
     elif N <= 1:
         raise ValueError("ValueError: length must be greater than 1")
     G = dft(time_series)
-    
+
     # freq = np.fft.fftfreq(len(y), t[1] - t[0])
     N = len(time_series)
     Nu = int(np.ceil((N+1)/2))
@@ -157,8 +157,8 @@ def fourier_approx(alpha0, table, data, k=[]):  # yes, total approx
         approximation[j] = alpha0 + np.sum(
             alpha*np.cos(2.*np.pi*k/N * j)
             + beta*np.sin(2.*np.pi*k/N * j))
-    print(approximation)
-    print(approximation.size)
+    # print(approximation)
+    # print(approximation.size)
     return approximation
 
 
@@ -173,9 +173,11 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
         If not entered then uses optimise_residuals to find best value to use.
     '''
     # time series
+    # print(table)
+    # print(type(table))
     if components == 0:
         components = optimise_residuals(alpha0, table, data)
-    print("number of components being used: " + str(components))
+    # print("number of components being used: " + str(components))
     top_indices = np.flip(np.argsort(np.array(table.power))[-components:])
     top_alpha = [table.alpha[i] for i in top_indices]
     top_beta = [table.beta[i] for i in top_indices]
@@ -208,13 +210,11 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
     amplitude = {}
     power = {}
     for i in range(0, components):
-        print(i)
         y = (
             alpha0
             + top_alpha[i]*np.cos(2.*np.pi*top_indices[i]/N * np.arange(0, N))
             + top_beta[i]*np.sin(2.*np.pi*top_indices[i]/N * np.arange(0, N))
         )
-        print('y', y)
         freq['component'+str(i)] = 2.*np.pi*top_indices[i]/N
         amplitude['component'+str(i)] = max(y)-min(y)
         power['component'+str(i)] = top_power[i]
@@ -246,11 +246,10 @@ def optimise_residuals(alpha0, table, data):  # no
     :param data: time-series data
     :returns best_index: number of components to include in approximation.
     '''
-    print('optimising residuals')
+    # print('optimising residuals')
     mean_residual = []
     x = np.arange(1, len(table.power), 1)
     for components in x:
-        print(components)
         top_indices = np.argsort(np.array(table.power))[-components:]
         top_alpha = [table.alpha[i] for i in top_indices]
         top_beta = [table.beta[i] for i in top_indices]
@@ -265,32 +264,36 @@ def optimise_residuals(alpha0, table, data):  # no
         mean_residual.append(np.mean(abs(residual)))
     diff = np.gradient(np.gradient(mean_residual))
     sorted_indices = np.argsort(diff)
-    for i in sorted_indices:
-        if mean_residual[i] < 1:
-            best_index = i
-            break
+    if abs(max(mean_residual, key=abs)) > 1:
+        best_index = len(sorted_indices)-1
+    else:
+        for i in sorted_indices:
+            if abs(mean_residual[i]) < 1:
+                best_index = i
+                break
     return best_index
 
-'''
-dataframe = pd.read_csv('bokeh_app/data/test_timeseries_noisy.csv')
 
-selected_column = 'y'
+# example usage without Bokeh
+# dataframe = pd.read_csv('bokeh_app/data/test_timeseries_noisy.csv')
 
-time = dataframe['time'].values.tolist()
-data = dataframe[selected_column].values.tolist()
+# selected_column = 'y'
+
+# time = dataframe['time'].values.tolist()
+# data = dataframe[selected_column].values.tolist()
 
 # This is where you pass it the appropriate data
 
 # given name of header of pd
 
-alpha0, table = dfs(data)
+# alpha0, table = dfs(data)
 # frequency, power_spectrum = fourier_to_freq_spectrum(data, time)
 # print(len(frequency), len(power_spectrum))
 
-# calc_residuals(alpha0, table, data, time, components = 14)
+# calc_residuals(alpha0, table, data, time, components = 0)
 
 # plt.plot(data)
-plt.plot(fourier_approx(alpha0, table, data))
-plt.show()
-'''
+# plt.plot(fourier_approx(alpha0, table, data))
+# plt.show()
+
 # print(fourier_to_coefficients([1,2,3,4,5,6]))
