@@ -3,6 +3,7 @@
 
 ![Unit tests for OS Versions.](https://github.com/goodteamname/spino/workflows/Unit%20tests%20for%20OS%20Versions./badge.svg)
 ![Unit tests for Python Versions.](https://github.com/goodteamname/spino/workflows/Unit%20tests%20for%20Python%20Versions./badge.svg)
+[![codecov](https://codecov.io/gh/goodteamname/spino/branch/main/graph/badge.svg)](https://codecov.io/gh/goodteamname/spino)
 
 
 <br />
