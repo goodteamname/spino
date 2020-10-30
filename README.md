@@ -1,10 +1,14 @@
 <!-- Prpject Title and Logo -->
 
-<!-- Add CodeCov, Python Version Testing and OS Testing --!>
+[![Documentation Status](https://readthedocs.org/projects/spino/badge/?version=latest)](https://spino.readthedocs.io/en/latest/?badge=latest)
+![Unit tests for OS Versions.](https://github.com/goodteamname/spino/workflows/Unit%20tests%20for%20OS%20Versions./badge.svg)
+![Unit tests for Python Versions.](https://github.com/goodteamname/spino/workflows/Unit%20tests%20for%20Python%20Versions./badge.svg)
+[![codecov](https://codecov.io/gh/goodteamname/spino/branch/main/graph/badge.svg)](https://codecov.io/gh/goodteamname/spino)
+
 
 <br />
 <p align="center">
-    <img src="images/Logo_Image.png" alt="Logo" width="100" height="100">
+    <img src="images/Logo.png" alt="Logo" width="258" height="147">
   </a>
 
   <h3 align="center">SPINO</h3>
