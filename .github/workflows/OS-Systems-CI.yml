@@ -34,7 +34,6 @@ jobs:
         pip install wheel
         pip3 install flake8 pytest
         pip3 install numpy scipy matplotlib pandas
-        pip install numpy.testing
         pip3 install wheel
     #- name: Lint with flake8
       #run: |
