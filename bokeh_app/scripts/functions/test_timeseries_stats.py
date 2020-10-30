@@ -1,9 +1,8 @@
 import pytest
 import pandas as pd
 
-# must run py.test in bokeh_app directory for import of data to work.
 ts = pd.read_csv(
-  "data/test_timeseries_copy.csv",
+  "bokeh_app/data/test_timeseries_copy.csv",
   skiprows=1,
   delimiter=",",
   names=['time', 'y1', 'y2', 'y3']
