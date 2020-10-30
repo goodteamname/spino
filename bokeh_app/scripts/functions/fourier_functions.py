@@ -184,12 +184,6 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
     top_table = pd.DataFrame(
         {'alpha': top_alpha, 'beta': top_beta, 'power': top_power}
         )
-    true_approx = fourier_approx(
-        alpha0,
-        table,
-        data,
-        np.arange(1, len(table.alpha)+1)
-        )
     approximation = fourier_approx(
         alpha0, top_table, data, k=top_indices+1
         )
