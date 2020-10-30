@@ -1,9 +1,6 @@
 # Pandas for data management
 import pandas as pd
 
-# os methods for manipulating paths
-from os.path import dirname, join
-
 # Bokeh basics
 from bokeh.io import curdoc
 from bokeh.models.widgets import Tabs
@@ -19,7 +16,6 @@ ts = pd.read_csv("./bokeh_app/data/test_timeseries_copy.csv", skiprows=1, delimi
 
 # Create each of the tabs
 tab1 = timeseries_tab(ts)
-
 tab4 = spectral_tab(ts)
 
 # Put all the tabs into one application

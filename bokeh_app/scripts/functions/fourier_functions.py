@@ -97,8 +97,9 @@ def fourier_to_freq_spectrum(time_series, test_time):  # yes
     abs_fourier_transform = np.abs(fourier_transform)
     power_spectrum = np.square(abs_fourier_transform)
     frequency = np.linspace(0, sampling_rate/2, len(power_spectrum))
-    # pd dataframe columns freq, power
-    return frequency, power_spectrum
+    d = {'frequency': frequency, 'power': power_spectrum}
+    df = pd.DataFrame(d)
+    return df
 
 
 def fourier_to_coefficients(time_series):  # yes
@@ -184,7 +185,7 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
     # difference
     residual = data-approximation
     residual_df = pd.DataFrame(
-        {'time': data_times, 'data': data, 'residuals': residual}
+        {'time': data_times, 'raw_data': data, 'residuals': residual}
         )
     # time, data, residual column
     # plt.plot(residual)
@@ -216,7 +217,7 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
     summary_table = pd.DataFrame(
         {'frequency': freq, 'amplitude': amplitude, 'power': power}
         )
-
+    return top_components_for_approx, summary_table, residual_df
     # THINGS YOU COULD RETURN
     # top_components_for_approx -
     #   pd.df with one column for time, then a column for each key component
@@ -237,7 +238,7 @@ def optimise_residuals(alpha0, table, data):  # no
     '''
     print('optimising residuals')
     mean_residual = []
-    x = np.arange(1, len(table.power), 1)
+    x = np.arange(1, len(table.power), 10)
     for components in x:
         print(components)
         top_indices = np.argsort(np.array(table.power))[-components:]
