@@ -1,14 +1,14 @@
 import pandas as pd
-# import matplotlib.pyplot as plt
-import numpy as np
+import matplotlib.pyplot as plt
+import numpy as np 
+import os
 
-# # Import temporary test data as pandas df
-# df = pd.read_csv(
-#   os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv'
+# Import temporary test data as pandas df
+# df = pd.read_csv('../../../data/linear_trend_test_timeseries_noisy.csv'
 # )
 
 # ts = pd.read_csv(
-#   "bokeh_app/data/test_timeseries.csv",
+#   "/Users/miriamgauntlett/spino/bokeh_app/data/test_timeseries_copy.csv",
 #   skiprows=1,
 #   delimiter=",",
 #   names=['time', 'y1', 'y2', 'y3']
