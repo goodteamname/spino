@@ -28,7 +28,7 @@ def correlations_tab(ts):
                                tools="hover, pan, zoom_in, zoom_out, \
                                    reset, save")
         plot_autocorr.circle('lags', 'auto_corrs', source=source)
-        plot_autocorr.line('lags', 'auto_corrs', source=source)
+        plot_autocorr.line('lags', 'auto_corrs', source=source, line_width=0.5)
         plot_autocorr.title.text_font_size = '14pt'
         plot_autocorr.xaxis.axis_label_text_font_size = '12pt'
         plot_autocorr.xaxis.axis_label_text_font_style = 'bold'
@@ -61,8 +61,10 @@ def correlations_tab(ts):
     ts_select_autocorr = Select(value=ts_available[0], title='Time Series',
                                 options=ts_available)
     ts_select_autocorr.on_change('value', update_data_autocorr)
-    # Select lag value
-    lag_select_autocorr = Slider(start=10, end=100, step=1, value=10,
+    # Select lag value up to a max of
+    # the length of the time series
+    max_lag = ts.shape[0]
+    lag_select_autocorr = Slider(start=10, end=max_lag, step=1, value=10,
                                  title='Lag')
     lag_select_autocorr.on_change('value', update_data_autocorr)
 
@@ -93,7 +95,7 @@ def correlations_tab(ts):
                            x_axis_label="Lag", y_axis_label="Correlation",
                            tools="hover, pan, zoom_in, zoom_out, reset, save")
         plot_corr.circle('lags', 'corrs', source=source)
-        plot_corr.line('lags', 'corrs', source=source)
+        plot_corr.line('lags', 'corrs', source=source, line_width=0.5)
         plot_corr.title.text_font_size = '14pt'
         plot_corr.xaxis.axis_label_text_font_size = '12pt'
         plot_corr.xaxis.axis_label_text_font_style = 'bold'
@@ -121,14 +123,18 @@ def correlations_tab(ts):
     # Select time series for Autocorrelation
     ts_available = ts.columns.tolist()
     ts_available.remove('time')
-    ts_select_corr = Select(value=ts_available[0], title='Time Series',
+    ts_select_corr = Select(value=ts_available[0], title='Time Series 1',
                             options=ts_available)
     ts_select_corr.on_change('value', update_data_corr)
-    ts_select2_corr = Select(value=ts_available[1], title='Time Series',
+    ts_select2_corr = Select(value=ts_available[1],
+                             title='Time Series 2 (shifted)',
                              options=ts_available)
     ts_select2_corr.on_change('value', update_data_corr)
-    # Select lag value
-    lag_select_corr = Slider(start=10, end=100, step=1, value=10, title='Lag')
+    # Select lag value up to a max of
+    # the length of the time series
+    max_lag = ts.shape[0]
+    lag_select_corr = Slider(start=10, end=max_lag, step=1, value=10,
+                             title='Lag')
     lag_select_corr.on_change('value', update_data_corr)
 
     # Initial state and plotting.
