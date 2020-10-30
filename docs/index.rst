@@ -6,12 +6,16 @@
 Welcome to SPINO's documentation!
 =================================
 
+SPINO is an app for visualising time series decompositions and spectral analysis.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: timeseries_stats
-   :members:
+   Fourier Decomposition
+   Time Series Statistics
+
+
 
 Indices and tables
 ==================

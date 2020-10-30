@@ -1,14 +1,14 @@
 import pandas as pd
-# import matplotlib.pyplot as plt
-import numpy as np
+import matplotlib.pyplot as plt
+import numpy as np 
+import os
 
-# # Import temporary test data as pandas df
-# df = pd.read_csv(
-#   os.getcwd() + '/data/linear_trend_test_timeseries_noisy.csv'
+# Import temporary test data as pandas df
+# df = pd.read_csv('../../../data/linear_trend_test_timeseries_noisy.csv'
 # )
 
 # ts = pd.read_csv(
-#   "bokeh_app/data/test_timeseries.csv",
+#   "/Users/miriamgauntlett/spino/bokeh_app/data/test_timeseries_copy.csv",
 #   skiprows=1,
 #   delimiter=",",
 #   names=['time', 'y1', 'y2', 'y3']
@@ -27,10 +27,9 @@ def remove_trend(ts, N):
     :param ts: Time series data as a pandas dataframe.
     :param N: Degree of polynomial trend to remove.
     :return ts_detrended: timeseries composed of time column, and two
-        output result columns per input data column:
-        - fit_<data_col>: Array of values of the best fitting polynomial
-            at each time
-        - detrended_<data_col>: original data, with trend fit subtracted
+        output result columns per input data column; fit_<data_col> is
+        Array of values of the best fitting polynomial at each time;
+        detrended_<data_col> is original data, with trend fit subtracted
     """
     headers = ['time']
     data = [ts.time]
