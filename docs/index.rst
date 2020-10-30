@@ -10,11 +10,10 @@ Welcome to SPINO's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: timeseries_stats
-   :members:
+   Fourier Decomposition
+   Time Series Statistics
 
-.. automodule:: fourier_functions
-   :members:
+
 
 Indices and tables
 ==================
