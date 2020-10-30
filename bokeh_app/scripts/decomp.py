@@ -1,10 +1,9 @@
 # Import packages.
-import numpy as np
 import pandas as pd
 from scripts.functions.timeseries_stats import rolling_mean, remove_trend, remove_seasonality
 from bokeh.io import curdoc
 from bokeh.plotting import figure
-from bokeh.models import (CategoricalColorMapper, HoverTool, ColumnDataSource, Panel, FuncTickFormatter, SingleIntervalTicker, LinearAxis)
+from bokeh.models import (HoverTool, ColumnDataSource, Panel, FuncTickFormatter, SingleIntervalTicker, LinearAxis)
 from bokeh.models.widgets import (CheckboxGroup, Slider, RangeSlider, Tabs, CheckboxButtonGroup, RadioButtonGroup, TableColumn, DataTable, Select, TextInput)
 from bokeh.layouts import row, column, WidgetBox
 from bokeh.palettes import Category20_16
@@ -23,7 +22,7 @@ def decomp_tab(ts):
         ttp = [("Time", "$x"), ("Value", "$y")]
 
         plot = figure(plot_height=400, plot_width=600, tooltips=ttp, title="Plot Name",
-                    tools="hover, pan, zoom_in, zoom_out, reset, save")
+                    tools="hover, panel, zoom_in, zoom_out, reset, save")
         for i, name in enumerate(ts_list):
             plot.line('time', name, source=source, line_width=3, line_color=ts_colors[i], legend_label=name)
 
