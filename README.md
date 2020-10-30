@@ -1,8 +1,9 @@
 <!-- Prpject Title and Logo -->
 
-<!-- Add CodeCov, Python Version Testing and OS Testing --!>
+
 ![Unit tests for OS Versions.](https://github.com/goodteamname/spino/workflows/Unit%20tests%20for%20OS%20Versions./badge.svg)
 ![Unit tests for Python Versions.](https://github.com/goodteamname/spino/workflows/Unit%20tests%20for%20Python%20Versions./badge.svg)
+
 
 <br />
 <p align="center">
