@@ -10,7 +10,7 @@ Welcome to SPINO's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: bokeh_app
+.. automodule:: timeseries_stats.py
    :members:
 
 Indices and tables
