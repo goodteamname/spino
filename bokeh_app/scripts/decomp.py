@@ -37,7 +37,7 @@ def decomp_tab(ts):
         ts_list = source.column_names
         ts_list.remove('index')
         ts_list.remove('time')
-        ts_list.remove('fit_y')
+        # ts_list.remove('fit_y')
 
         ttp = [("Time", "$x"), ("Value", "$y")]
 
@@ -127,6 +127,6 @@ def decomp_tab(ts):
     gridplot = column(plot, plot2)
     formatting = row(controls, gridplot)
 
-    # Make a tab with the layout 
+    # Make a tab with the layout.
     tab = Panel(child=formatting, title='Decomposition and Seasonality')
     return tab
