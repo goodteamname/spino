@@ -196,7 +196,7 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
     # difference
     residual = data-approximation
     residual_df = pd.DataFrame(
-        {'time': data_times, 'data': data, 'residuals': residual}
+        {'time': data_times, 'raw_data': data, 'approx': approximation, 'residuals': residual}
         )
     # time, data, residual column
     # plt.plot(residual)
@@ -214,10 +214,11 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
             + top_alpha[i]*np.cos(2.*np.pi*top_indices[i]/N * np.arange(0, N))
             + top_beta[i]*np.sin(2.*np.pi*top_indices[i]/N * np.arange(0, N))
         )
-        freq['component'+str(i)] = 2.*np.pi*top_indices[i]/N
-        amplitude['component'+str(i)] = max(y)-min(y)
-        power['component'+str(i)] = top_power[i]
-        top_components_for_approx_dict['component'+str(i)] = y
+        # print('y', y)
+        freq['Comp. '+str(i+1)] = round(2.*np.pi*top_indices[i]/N, 2)
+        amplitude['Comp. '+str(i+1)] = round(max(y)-np.mean(y), 2)
+        power['Comp. '+str(i+1)] = round(top_power[i], 2)
+        top_components_for_approx_dict['comp.'+str(i+1)] = y
         # plt.plot(y)
     # plt.show()
     top_components_for_approx = pd.DataFrame(
@@ -247,7 +248,7 @@ def optimise_residuals(alpha0, table, data):  # no
     '''
     # print('optimising residuals')
     mean_residual = []
-    x = np.arange(1, len(table.power), 1)
+    x = np.arange(1, len(table.power), 10)
     for components in x:
         top_indices = np.argsort(np.array(table.power))[-components:]
         top_alpha = [table.alpha[i] for i in top_indices]

@@ -1,17 +1,6 @@
 import pandas as pd
 import numpy as np
 
-# Import temporary test data as pandas df
-# df = pd.read_csv('../../../data/linear_trend_test_timeseries_noisy.csv'
-# )
-
-# ts = pd.read_csv(
-#   "/Users/miriamgauntlett/spino/bokeh_app/data/test_timeseries_copy.csv",
-#   skiprows=1,
-#   delimiter=",",
-#   names=['time', 'y1', 'y2', 'y3']
-# )
-
 
 def remove_trend(ts, N):
     """Remove a best fitting polynomial of degree N from time series data.
