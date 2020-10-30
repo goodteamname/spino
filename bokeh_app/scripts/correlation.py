@@ -1,5 +1,5 @@
 # Import packages.
-from .timeseries_stats import auto_corr, corr
+from .functions/timeseries_stats import auto_corr, corr
 from bokeh.plotting import figure
 from bokeh.models import (CategoricalColorMapper, HoverTool, ColumnDataSource, Panel, FuncTickFormatter, SingleIntervalTicker, LinearAxis)
 from bokeh.models.widgets import (CheckboxGroup, Slider, RangeSlider, Tabs, CheckboxButtonGroup, RadioButtonGroup, TableColumn, DataTable, Select, TextInput)

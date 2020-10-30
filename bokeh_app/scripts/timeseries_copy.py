@@ -1,7 +1,7 @@
 # Import packages.
 import pandas as pd
 import numpy as np
-from .timeseries_stats import rolling_mean, rolling_std
+from .functions.timeseries_stats import rolling_mean, rolling_std
 from bokeh.io import curdoc
 from bokeh.plotting import figure
 from bokeh.models import (CategoricalColorMapper, HoverTool, ColumnDataSource,
