@@ -13,6 +13,9 @@ Welcome to SPINO's documentation!
 .. automodule:: timeseries_stats
    :members:
 
+.. automodule:: fourier_functions
+   :members:
+
 Indices and tables
 ==================
 
