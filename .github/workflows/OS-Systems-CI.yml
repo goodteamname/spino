@@ -32,6 +32,9 @@ jobs:
         pip install flake8 pytest
         pip install numpy scipy matplotlib pandas
         pip install wheel
+        pip3 install flake8 pytest
+        pip3 install numpy scipy matplotlib pandas
+        pip3 install wheel
     #- name: Lint with flake8
       #run: |
         # stop the build if there are Python syntax errors or undefined names
