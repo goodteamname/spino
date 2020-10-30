@@ -1,15 +1,14 @@
 # Import packages.
-import numpy as np
 import pandas as pd
-from scripts.functions.timeseries_stats import rolling_mean, remove_trend, remove_seasonality
-from bokeh.io import curdoc
+from scripts.functions.timeseries_stats import remove_trend, remove_seasonality
 from bokeh.plotting import figure
-from bokeh.models import (CategoricalColorMapper, HoverTool, ColumnDataSource, Panel, FuncTickFormatter, SingleIntervalTicker, LinearAxis)
-from bokeh.models.widgets import (CheckboxGroup, Slider, RangeSlider, Tabs, CheckboxButtonGroup, RadioButtonGroup, TableColumn, DataTable, Select, TextInput)
+from bokeh.models import (ColumnDataSource, Panel)
+from bokeh.models.widgets import (Slider, Select, TextInput)
 from bokeh.layouts import row, column, WidgetBox
 from bokeh.palettes import Category20_16
 
 ts_colors = Category20_16
+
 
 # decomp Tab.
 def decomp_tab(ts):
@@ -23,12 +22,12 @@ def decomp_tab(ts):
         ttp = [("Time", "$x"), ("Value", "$y")]
 
         plot = figure(plot_height=400, plot_width=600, tooltips=ttp, title="Plot Name",
-                    tools="hover, pan, zoom_in, zoom_out, reset, save")
+                      tools="hover, pan, zoom_in, zoom_out, reset, save")
         for i, name in enumerate(ts_list):
             plot.line('time', name, source=source, line_width=3, line_color=ts_colors[i], legend_label=name)
 
         plot.legend.location = "top_left"
-        plot.legend.click_policy="hide"
+        plot.legend.click_policy = "hide"
 
         return plot
 
@@ -42,16 +41,16 @@ def decomp_tab(ts):
         ttp = [("Time", "$x"), ("Value", "$y")]
 
         plot = figure(plot_height=400, plot_width=600, tooltips=ttp, title="Plot Name",
-                    tools="hover, pan, zoom_in, zoom_out, reset, save")
+                      tools="hover, pan, zoom_in, zoom_out, reset, save")
         for i, name in enumerate(ts_list):
             plot.line('time', name, source=source, line_width=3, line_color=ts_colors[i], legend_label=name)
 
         plot.legend.location = "top_left"
-        plot.legend.click_policy="hide"
+        plot.legend.click_policy = "hide"
 
         return plot
 
-    #Set up callbacks
+    # Set up callbacks
     def update_title(attrname, old, new):
         plot.title.text = text.value
 
@@ -62,10 +61,6 @@ def decomp_tab(ts):
         if poly_select.value == 0:
             pass
         else:
-            # method = [rolling_method.labels[i] for i in rolling_method.active]
-            # if method == "Mean"
-
-            # Function to apply moving average to pandas dataframe and export to CDS type.
             poly_select.value = new
 
             detrended_data = remove_trend(ts, poly_select.value)
@@ -78,10 +73,6 @@ def decomp_tab(ts):
         if season_select.value == -1:
             pass
         else:
-            # method = [rolling_method.labels[i] for i in rolling_method.active]
-            # if method == "Mean"
-
-            # Function to apply moving average to pandas dataframe and export to CDS type.
             season_select.value = new
 
             deseason_data = remove_seasonality(detrended_data, season_select.value)
@@ -100,19 +91,18 @@ def decomp_tab(ts):
     poly_select = Slider(start=1, end=10, step=1, value=1, title='Polynomial')
     poly_select.on_change('value', update_poly)
 
-
     steps = ts['time'].iloc[-1] / 10
     season_select = Slider(start=0, end=ts['time'].iloc[-1], step=steps, value=0, title='Season period')
     season_select.on_change('value', update_season)
 
-    #preparing data to go into trend removal graph
+    # preparing data to go into trend removal graph
     detrended_data = remove_trend(ts, poly_select.value)
     combine = [ts, detrended_data]
     combined_df = pd.concat(combine)
     source = ColumnDataSource(data=combined_df)
     plot = make_decompplot(source)
 
-    #preparing data for seasonality graph
+    # preparing data for seasonality graph
     deseason_data = remove_seasonality(detrended_data, 0)
     combine3 = [ts, deseason_data]
     combined_df3 = pd.concat(combine3)

@@ -2,8 +2,8 @@
 from .functions.timeseries_stats import remove_trend
 from .functions.fourier_functions import dfs, fourier_to_freq_spectrum, calc_residuals
 from bokeh.plotting import figure
-from bokeh.models import (CategoricalColorMapper, HoverTool, ColumnDataSource, Panel, FuncTickFormatter, SingleIntervalTicker, LinearAxis)
-from bokeh.models.widgets import (CheckboxGroup, Slider, RangeSlider, Tabs, RadioButtonGroup, TableColumn, DataTable, Select, TextInput)
+from bokeh.models import (ColumnDataSource, Panel)
+from bokeh.models.widgets import (Slider, TableColumn, DataTable, Select)
 from bokeh.layouts import row, WidgetBox, gridplot
 from bokeh.palettes import Category20_16
 
@@ -22,7 +22,7 @@ def spectral_tab(ts):
         ttp = [("Time", "$x"), ("Value", "$y")]
 
         plot_q1 = figure(plot_height=400, plot_width=400, tooltips=ttp, title="Time Series",
-                    tools="hover, pan, zoom_in, zoom_out, reset, save")
+                         tools="hover, pan, zoom_in, zoom_out, reset, save")
         for i, name in enumerate(ts_list):
             plot_q1.line('time', name, source=source, line_width=3, line_color=ts_colors[i], legend_label=name)
 
@@ -37,7 +37,7 @@ def spectral_tab(ts):
         ttp = [("Frequency", "$x"), ("Power", "$y")]
 
         plot_q2 = figure(plot_height=400, plot_width=400, tooltips=ttp, title="Power Spectrum",
-                    tools="hover, pan, zoom_in, zoom_out, reset, save")
+                         tools="hover, pan, zoom_in, zoom_out, reset, save")
         plot_q2.line('frequency', 'power', source=source, line_width=3, line_color=ts_colors[10])
         plot_q2.circle('frequency', 'power', source=source, fill_color="white", size=8)
 
@@ -52,7 +52,7 @@ def spectral_tab(ts):
         ttp = [("Time", "$x"), ("Value", "$y")]
 
         plot_q3 = figure(plot_height=400, plot_width=400, tooltips=ttp, title="Top 3 Fourier Components",
-                    tools="hover, pan, zoom_in, zoom_out, reset, save")
+                         tools="hover, pan, zoom_in, zoom_out, reset, save")
         for i, name in enumerate(ts_list):
             plot_q3.line('times', name, source=source, line_width=3, line_color=ts_colors[i], legend_label=name)
 
@@ -70,7 +70,7 @@ def spectral_tab(ts):
         ttp = [("Time", "$x"), ("Value", "$y")]
 
         plot_q4 = figure(plot_height=400, plot_width=400, tooltips=ttp, title="Fourier Residuals",
-                    tools="hover, pan, zoom_in, zoom_out, reset, save")
+                         tools="hover, pan, zoom_in, zoom_out, reset, save")
         for i, name in enumerate(ts_list):
             plot_q4.line('time', name, source=source, line_width=3, line_color=ts_colors[i], legend_label=name)
 
@@ -88,7 +88,6 @@ def spectral_tab(ts):
         ]
         summary_table = DataTable(source=source, columns=columns, width=400, height=200)
         return summary_table
-
 
     # Make dataset function.
     def make_dataset(ts, col, N):
@@ -140,10 +139,10 @@ def spectral_tab(ts):
         # Compute fourier components.
         if len(new_data.columns) == 2:
             alpha0, coef = dfs(new_data.iloc[:, 1])
-            top_components_for_approx, _, _ = calc_residuals(alpha0, coef, new_data.iloc[:,1], new_data['time'], components=5)
+            top_components_for_approx, _, _ = calc_residuals(alpha0, coef, new_data.iloc[:, 1], new_data['time'], components=5)
         else:
             alpha0, coef = dfs(new_data.iloc[:, 2])
-            top_components_for_approx, _, _ = calc_residuals(alpha0, coef, new_data.iloc[:,2], new_data['time'], components=5)
+            top_components_for_approx, _, _ = calc_residuals(alpha0, coef, new_data.iloc[:, 2], new_data['time'], components=5)
 
         new_source_q3 = ColumnDataSource(data=top_components_for_approx)
         source_q3.data.update(new_source_q3.data)
@@ -152,10 +151,10 @@ def spectral_tab(ts):
     def update_fourier2(new_data):
         if len(new_data.columns) == 2:
             alpha0, coef = dfs(new_data.iloc[:, 1])
-            _, _, residual_df = calc_residuals(alpha0, coef, new_data.iloc[:,1], new_data['time'], components=component_select.value)
+            _, _, residual_df = calc_residuals(alpha0, coef, new_data.iloc[:, 1], new_data['time'], components=component_select.value)
         else:
             alpha0, coef = dfs(new_data.iloc[:, 2])
-            _, _, residual_df = calc_residuals(alpha0, coef, new_data.iloc[:,2], new_data['time'], components=component_select.value)
+            _, _, residual_df = calc_residuals(alpha0, coef, new_data.iloc[:, 2], new_data['time'], components=component_select.value)
 
         new_source_q4 = ColumnDataSource(data=residual_df)
         source_q4.data.update(new_source_q4.data)
@@ -164,10 +163,10 @@ def spectral_tab(ts):
     def update_summarytable(new_data):
         if len(new_data.columns) == 2:
             alpha0, coef = dfs(new_data.iloc[:, 1])
-            _, summary_table, _ = calc_residuals(alpha0, coef, new_data.iloc[:,1], new_data['time'], components=5)
+            _, summary_table, _ = calc_residuals(alpha0, coef, new_data.iloc[:, 1], new_data['time'], components=5)
         else:
             alpha0, coef = dfs(new_data.iloc[:, 2])
-            _, summary_table, _ = calc_residuals(alpha0, coef, new_data.iloc[:,2], new_data['time'], components=5)
+            _, summary_table, _ = calc_residuals(alpha0, coef, new_data.iloc[:, 2], new_data['time'], components=5)
 
         new_source_summarytable = ColumnDataSource(data=summary_table)
         source_summarytable.data.update(new_source_summarytable.data)
@@ -190,9 +189,9 @@ def spectral_tab(ts):
     # Initial state and plotting.
 
     # Ensuring ts dataframe has odd no. elements.
-    if (len(ts)%2) == 0:
+    if (len(ts) % 2) == 0:
         # Remove last row when even no. elements.
-        ts.drop(ts.tail(1).index,inplace=True)
+        ts.drop(ts.tail(1).index, inplace=True)
     else:
         pass
 
@@ -200,11 +199,11 @@ def spectral_tab(ts):
     initial_data = make_dataset(ts, ts_available[0], 0)
     source_q1 = ColumnDataSource(data=initial_data)
     # Compute initial power spectrum for default time series.
-    initial_pspec = fourier_to_freq_spectrum(initial_data.iloc[:,1], initial_data['time'])
+    initial_pspec = fourier_to_freq_spectrum(initial_data.iloc[:, 1], initial_data['time'])
     source_q2 = ColumnDataSource(data=initial_pspec)
     # Compute initial fourier components for default time series.
-    alpha0, coef = dfs(initial_data.iloc[:,1])
-    top_components_for_approx, summary_table, residual_df = calc_residuals(alpha0, coef, initial_data.iloc[:,1], initial_data['time'], components=5)
+    alpha0, coef = dfs(initial_data.iloc[:, 1])
+    top_components_for_approx, summary_table, residual_df = calc_residuals(alpha0, coef, initial_data.iloc[:, 1], initial_data['time'], components=5)
 
     source_q3 = ColumnDataSource(data=top_components_for_approx)
     source_q4 = ColumnDataSource(data=residual_df)
