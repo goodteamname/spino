@@ -75,7 +75,7 @@ The SPINO Library is structured as follows:
 + **Tab4:** Spectral Analysis - Once you have detrended your data with a polynomial of your choosing, view the power spectrum of your time series from a discrete fourier series and examine the top 5 components and their characteristics. You are can choose to view the resulting fourier approximation from as many components as you like, alongside the residual when subtracted from your detrended data. 
 
 **Importing Data**
-+ Users can import data by amending the main.py file in *spino/bokeh_app/main.py*. An example dataset is included for 
++ Users can import data by amending the main.py file in *spino/bokeh_app/main.py*. An example dataset, test_timeseries.csv is included for users to ensure the SPINO App is working locally. 
     
 For further details on each of the modules underlying the SPINO app view our [docs](https://spino.readthedocs.io).
 
