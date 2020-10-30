@@ -37,7 +37,7 @@ def test_dft(test, expectedShape, raises):
     import dft
     if raises:
         with pytest.raises(raises):
-            npt.assert_equal(dft.dft(test).shape, expectedShape)
+            npt.assert_equal(dft.dft(test)[1].shape, expectedShape)
             print(type(dft.dft(test)))
     else:
-        npt.assert_equal(dft.dft(test).shape, expectedShape)
+        npt.assert_equal(dft.dft(test)[1].shape, expectedShape)
