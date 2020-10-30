@@ -10,7 +10,7 @@ Welcome to SPINO's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: timeseries_stats.py
+.. automodule:: timeseries_stats
    :members:
 
 Indices and tables
