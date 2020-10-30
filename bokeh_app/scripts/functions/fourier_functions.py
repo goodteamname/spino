@@ -16,11 +16,17 @@ def dft(time_series):  # don't call this
         table.beta   = coefficients of sine terms for k=1:Nyquist
         table.power  = normalised power-spectrum of the time-series
     '''
-
+    N = len(time_series)
+    if N % 2 == 0:
+        print('even')
+        time_series = time_series[0:-1]
+        N -= 1
+    elif N <= 1:
+        raise ValueError("ValueError: length must be greater than 1")
     print(time_series)
     # Ensure that time_series is a column vector
     if len(np.array(time_series).shape) != 1:
-        print('needs to be 1D')
+        raise ValueError("ValueError: needs to be 1D")
 
     G = np.fft.fft(time_series)
 
@@ -53,7 +59,7 @@ def dfs(time_series):  # yes
 
     # Ensure that time_series is a column vector
     if len(np.array(time_series).shape) != 1:
-        print('needs to be 1D')
+        raise ValueError("ValueError: needs to be 1D")
 
     # Create index of time-series entries
     j = np.arange(0, N)
@@ -151,7 +157,8 @@ def fourier_approx(alpha0, table, data, k=[]):  # yes, total approx
         approximation[j] = alpha0 + np.sum(
             alpha*np.cos(2.*np.pi*k/N * j)
             + beta*np.sin(2.*np.pi*k/N * j))
-    
+    print(approximation)
+    print(approximation.size)
     return approximation
 
 
@@ -264,26 +271,26 @@ def optimise_residuals(alpha0, table, data):  # no
             break
     return best_index
 
+'''
+dataframe = pd.read_csv('bokeh_app/data/test_timeseries_noisy.csv')
 
-# dataframe = pd.read_csv('bokeh_app/data/test_timeseries_noisy.csv')
+selected_column = 'y'
 
-# selected_column = 'y'
-
-# time = dataframe['time'].values.tolist()
-# data = dataframe[selected_column].values.tolist()
+time = dataframe['time'].values.tolist()
+data = dataframe[selected_column].values.tolist()
 
 # This is where you pass it the appropriate data
 
 # given name of header of pd
 
-# alpha0, table = dfs(data)
+alpha0, table = dfs(data)
 # frequency, power_spectrum = fourier_to_freq_spectrum(data, time)
 # print(len(frequency), len(power_spectrum))
 
 # calc_residuals(alpha0, table, data, time, components = 14)
 
 # plt.plot(data)
-# plt.plot(fourier_approx(alpha0, table, data))
-# plt.show()
-
+plt.plot(fourier_approx(alpha0, table, data))
+plt.show()
+'''
 # print(fourier_to_coefficients([1,2,3,4,5,6]))
