@@ -3,7 +3,7 @@ import pandas as pd
 from scripts.functions.timeseries_stats import remove_trend, remove_seasonality
 from bokeh.plotting import figure
 from bokeh.models import (ColumnDataSource, Panel)
-from bokeh.models.widgets import (Slider, Select, TextInput)
+from bokeh.models.widgets import (Slider, TextInput)
 from bokeh.layouts import row, column, WidgetBox
 from bokeh.palettes import Category20_16
 
