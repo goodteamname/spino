@@ -205,7 +205,7 @@ def test_fourier_approx(test_data, expectedShape, raises):
             2,
             (5, 3),
             (2, 3),
-            (5, 3),
+            (5, 4),
             None
         ),
         (
@@ -214,7 +214,7 @@ def test_fourier_approx(test_data, expectedShape, raises):
             2,
             (7, 3),
             (2, 3),
-            (7, 3),
+            (7, 4),
             None
         ),
         (
@@ -223,7 +223,7 @@ def test_fourier_approx(test_data, expectedShape, raises):
             2,
             (6, 3),
             (2, 3),
-            (6, 3),
+            (6, 4),
             None
         ),
         (
@@ -232,7 +232,7 @@ def test_fourier_approx(test_data, expectedShape, raises):
             2,
             (5, 3),
             (3, 2),
-            (5, 3),
+            (5, 4),
             ValueError
         ),
         (
@@ -241,7 +241,7 @@ def test_fourier_approx(test_data, expectedShape, raises):
             2,
             (1, 3),
             (2, 3),
-            (1, 3),
+            (1, 4),
             ValueError
         ),
         (
@@ -250,7 +250,7 @@ def test_fourier_approx(test_data, expectedShape, raises):
             2,
             (0, 3),
             (2, 3),
-            (0, 3),
+            (0, 4),
             ValueError
         ),
     ])
@@ -310,7 +310,7 @@ def test_optimise_residuals(test_data, test_times):
     print(df)
     expectedShape0 = (len(test_data), components+1)
     expectedShape1 = (components, 3)
-    expectedShape2 = (len(test_data), 3)
+    expectedShape2 = (len(test_data), 4)
     npt.assert_equal(fourier_functions.calc_residuals(alpha0, df, test_data, test_times, components)[0].shape, expectedShape0)
     npt.assert_equal(fourier_functions.calc_residuals(alpha0, df, test_data, test_times, components)[1].shape, expectedShape1)
     npt.assert_equal(fourier_functions.calc_residuals(alpha0, df, test_data, test_times, components)[2].shape, expectedShape2)
