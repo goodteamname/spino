@@ -23,10 +23,10 @@ def dft(time_series):  # don't call this
         N -= 1
     elif N <= 1:
         raise ValueError("ValueError: length must be greater than 1")
-
+    print(time_series)
     # Ensure that time_series is a column vector
     if len(np.array(time_series).shape) != 1:
-        print('needs to be 1D')
+        raise ValueError("ValueError: needs to be 1D")
 
     G = np.fft.fft(time_series)
 
@@ -59,7 +59,7 @@ def dfs(time_series):  # yes
 
     # Ensure that time_series is a column vector
     if len(np.array(time_series).shape) != 1:
-        print('needs to be 1D')
+        raise ValueError("ValueError: needs to be 1D")
 
     # Create index of time-series entries
     j = np.arange(0, N)
@@ -98,7 +98,9 @@ def fourier_to_freq_spectrum(time_series, test_time):  # yes
     power_spectrum = np.square(abs_fourier_transform)
     frequency = np.linspace(0, sampling_rate/2, len(power_spectrum))
     # pd dataframe columns freq, power
-    return frequency, power_spectrum
+    d = {'frequency': frequency, 'power': power_spectrum}
+    df = pd.DataFrame(d)
+    return df
 
 
 def fourier_to_coefficients(time_series):  # yes
@@ -110,7 +112,15 @@ def fourier_to_coefficients(time_series):  # yes
         table.beta   = coefficients of sine terms for k=1:Nyquist
         table.power  = normalised power-spectrum of the time-series
     '''
+    N = len(time_series)
+    if N % 2 == 0:
+        print('even')
+        time_series = time_series[0:-1]
+        N -= 1
+    elif N <= 1:
+        raise ValueError("ValueError: length must be greater than 1")
     G = dft(time_series)
+    
     # freq = np.fft.fftfreq(len(y), t[1] - t[0])
     N = len(time_series)
     Nu = int(np.ceil((N+1)/2))
@@ -147,7 +157,8 @@ def fourier_approx(alpha0, table, data, k=[]):  # yes, total approx
         approximation[j] = alpha0 + np.sum(
             alpha*np.cos(2.*np.pi*k/N * j)
             + beta*np.sin(2.*np.pi*k/N * j))
-    print(approximation[0])
+    print(approximation)
+    print(approximation.size)
     return approximation
 
 
@@ -216,7 +227,7 @@ def calc_residuals(alpha0, table, data, data_times, components=0):
     summary_table = pd.DataFrame(
         {'frequency': freq, 'amplitude': amplitude, 'power': power}
         )
-
+    return top_components_for_approx, summary_table, residual_df
     # THINGS YOU COULD RETURN
     # top_components_for_approx -
     #   pd.df with one column for time, then a column for each key component
@@ -260,7 +271,7 @@ def optimise_residuals(alpha0, table, data):  # no
             break
     return best_index
 
-
+'''
 dataframe = pd.read_csv('bokeh_app/data/test_timeseries_noisy.csv')
 
 selected_column = 'y'
@@ -273,9 +284,13 @@ data = dataframe[selected_column].values.tolist()
 # given name of header of pd
 
 alpha0, table = dfs(data)
+# frequency, power_spectrum = fourier_to_freq_spectrum(data, time)
+# print(len(frequency), len(power_spectrum))
 
 # calc_residuals(alpha0, table, data, time, components = 14)
 
 # plt.plot(data)
-# plt.plot(fourier_approx(alpha0, table, data))
-# plt.show()
+plt.plot(fourier_approx(alpha0, table, data))
+plt.show()
+'''
+# print(fourier_to_coefficients([1,2,3,4,5,6]))

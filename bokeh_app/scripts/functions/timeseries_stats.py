@@ -27,10 +27,9 @@ def remove_trend(ts, N):
     :param ts: Time series data as a pandas dataframe.
     :param N: Degree of polynomial trend to remove.
     :return ts_detrended: timeseries composed of time column, and two
-        output result columns per input data column:
-        - fit_<data_col>: Array of values of the best fitting polynomial
-            at each time
-        - detrended_<data_col>: original data, with trend fit subtracted
+        output result columns per input data column; fit_<data_col> is
+        Array of values of the best fitting polynomial at each time;
+        detrended_<data_col> is original data, with trend fit subtracted
     """
     headers = ['time']
     data = [ts.time]
