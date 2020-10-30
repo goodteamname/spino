@@ -8,7 +8,7 @@
 
 <br />
 <p align="center">
-    <img src="images/Logo_Image.png" alt="Logo" width="100" height="100">
+    <img src="images/Logo.png" alt="Logo" width="258" height="147">
   </a>
 
   <h3 align="center">SPINO</h3>
