@@ -1,7 +1,5 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np 
-import os
+import numpy as np
 
 # Import temporary test data as pandas df
 # df = pd.read_csv('../../../data/linear_trend_test_timeseries_noisy.csv'
