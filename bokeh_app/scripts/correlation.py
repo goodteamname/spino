@@ -1,11 +1,8 @@
 # Import packages.
 from .functions.timeseries_stats import auto_corr, corr
 from bokeh.plotting import figure
-from bokeh.models import (HoverTool, ColumnDataSource,
-                          Panel,
-                          LinearAxis)
-from bokeh.models.widgets import (Slider,
-                                  Select, TextInput)
+from bokeh.models import (ColumnDataSource, Panel)
+from bokeh.models.widgets import (Slider, Select, TextInput)
 from bokeh.layouts import WidgetBox, gridplot
 
 
@@ -26,9 +23,10 @@ def correlations_tab(ts):
 
         plot_autocorr = figure(plot_height=400, plot_width=600, tooltips=ttp,
                                title="Autocorrelation",
-                               x_axis_label="Lag", 
+                               x_axis_label="Lag",
                                y_axis_label="Autocorrelation",
-                               tools="hover, pan, zoom_in, zoom_out, reset, save")
+                               tools="hover, pan, zoom_in, zoom_out, \
+                                   reset, save")
         plot_autocorr.circle('lags', 'auto_corrs', source=source)
         plot_autocorr.line('lags', 'auto_corrs', source=source)
         plot_autocorr.title.text_font_size = '14pt'
@@ -48,9 +46,9 @@ def correlations_tab(ts):
     def update_data_autocorr(attrname, old, new):
         new_source_autocorr = make_dataset_autocorr(ts,
                                                     ts_select_autocorr.value,
-                                                    lag=lag_select_autocorr.value)
+                                                    lag=lag_select_autocorr.
+                                                    value)
         source_autocorr.data.update(new_source_autocorr.data)
-
 
     # Set up widgets.
     # Input for plot titles
@@ -72,7 +70,6 @@ def correlations_tab(ts):
     source_autocorr = make_dataset_autocorr(ts, ts_available[0], 10)
 
     plot_autocorr = make_autocorrplot(source_autocorr)
-
 
     # Set up layouts and add to document.
     # Put controls in a single element.
@@ -117,7 +114,6 @@ def correlations_tab(ts):
                                             lag=lag_select_corr.value)
         source_corr.data.update(new_source_corr.data)
 
-
     # Set up widgets.
     # Input for plot titles
     text_corr = TextInput(title="Title", value='Correlation')
@@ -139,7 +135,6 @@ def correlations_tab(ts):
     source_corr = make_dataset_corr(ts, ts_available[0], ts_available[1], 10)
 
     plot_corr = make_corrplot(source_corr)
-
 
     # Set up layouts and add to document.
     # Put controls in a single element.
