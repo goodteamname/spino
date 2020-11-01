@@ -62,18 +62,18 @@ def decomp_tab(ts):
 ##################################################################
     # Set up callbacks
     def update_title(attrname, old, new):
-        plot_q1.title.text = text.value
+        plot1.title.text = text1.value
 
     def update_title2(attrname, old, new):
-        plot_q2.title.text = text2.value
+        plot2.title.text = text2.value
 
     def update_x_ax_label(attrname, old, new):
-        plot_q1.xaxis.axis_label = xaxis.value
-        plot_q1.xaxis.axis_label = xaxis.value
+        plot1.xaxis.axis_label = xaxis.value
+        plot2.xaxis.axis_label = xaxis.value
 
     def update_y_ax_label(attrname, old, new):
-        plot_q1.yaxis.axis_label = yaxis.value
-        plot_q1.xaxis.axis_label = yaxis.value
+        plot1.yaxis.axis_label = yaxis.value
+        plot2.xaxis.axis_label = yaxis.value
 
     def update_data(attrname, old, new):
         # Update data with selected timeseries.
