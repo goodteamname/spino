@@ -126,7 +126,7 @@ def correlations_tab(ts):
     ts_select_corr = Select(value=ts_available[0], title='Time Series 1',
                             options=ts_available)
     ts_select_corr.on_change('value', update_data_corr)
-    ts_select2_corr = Select(value=ts_available[1],
+    ts_select2_corr = Select(value=ts_available[0],
                              title='Time Series 2 (shifted)',
                              options=ts_available)
     ts_select2_corr.on_change('value', update_data_corr)
@@ -138,7 +138,7 @@ def correlations_tab(ts):
     lag_select_corr.on_change('value', update_data_corr)
 
     # Initial state and plotting.
-    source_corr = make_dataset_corr(ts, ts_available[0], ts_available[1], 10)
+    source_corr = make_dataset_corr(ts, ts_available[0], ts_available[0], 10)
 
     plot_corr = make_corrplot(source_corr)
 

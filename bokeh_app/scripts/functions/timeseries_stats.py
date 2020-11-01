@@ -72,7 +72,7 @@ def remove_seasonality(ts, T):
     # Values before first period T are lost; reset time indices to start at 0
     times = ts['time'][T_ind:].reset_index(drop=True)
 
-    ts_diff['time'] = times
+    ts_diff['time_diff'] = times
     return ts_diff
 
 

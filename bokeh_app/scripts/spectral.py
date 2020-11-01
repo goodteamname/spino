@@ -51,7 +51,7 @@ def spectral_tab(ts):
 
         ttp = [("Time", "$x"), ("Value", "$y")]
 
-        plot_q3 = figure(plot_height=400, plot_width=400, tooltips=ttp, title="Top 3 Fourier Components",
+        plot_q3 = figure(plot_height=400, plot_width=400, tooltips=ttp, title="Top 5 Fourier Components",
                          tools="hover, pan, zoom_in, zoom_out, reset, save")
         for i, name in enumerate(ts_list):
             plot_q3.line('times', name, source=source, line_width=3, line_color=ts_colors[i], legend_label=name)
@@ -120,7 +120,6 @@ def spectral_tab(ts):
         new_source_q1 = ColumnDataSource(data=new_data)
         # Update CDS to plot_q1.
         source_q1.data.update(new_source_q1.data)
-        print(source_q1.data)
 
     def update_powerspectrum(new_data):
         # Compute power spectrum.

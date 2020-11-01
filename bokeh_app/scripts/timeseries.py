@@ -5,7 +5,7 @@ from .functions.timeseries_stats import rolling_mean, rolling_std
 from bokeh.plotting import figure
 from bokeh.models import (HoverTool, ColumnDataSource, Panel)
 from bokeh.models.widgets import (Slider, CheckboxButtonGroup,
-                                  Select, TextInput)
+                                  Select, TextInput, Div)
 from bokeh.layouts import WidgetBox, gridplot
 from bokeh.palettes import Category20_16
 
@@ -70,11 +70,11 @@ def timeseries_tab(ts, hist_ts):
             source.data.update(new_source.data)
 
     # Set up widgets
-    text = TextInput(title="title", value='Plot Name')
+    text = TextInput(title="Title of Plot", value='Plot Name')
     text.on_change('value', update_title)
-    text2 = TextInput(title="x axis label", value='Axis Label')
+    text2 = TextInput(title="x-axis Label", value='Axis Label')
     text2.on_change('value', update_x_ax_label)
-    text3 = TextInput(title="y axis label", value='Axis Label')
+    text3 = TextInput(title="y-axis Label", value='Axis Label')
     text3.on_change('value', update_y_ax_label)
 
     rolling_method = Select(value='Mean', title='Statistic',
@@ -85,12 +85,17 @@ def timeseries_tab(ts, hist_ts):
                            title='Window Size')
     window_select.on_change('value', update_window)
 
+    div1 = Div(text="""<b>Plot Attributes:</b> <br> Modify axis labels. <br>""")
+    div2 = Div(text="""<b>Rolling Window Functions:</b> <br> Specify the size and statistic for a rolling window function. <br>""")
+    div3 = Div(text="""<b>Data Distribution:</b> <br> Examine the distribution of time series data points. <br>""")
+
+
     source = ColumnDataSource(data=ts)
     plot = make_lineplot(source)
 
     # Set up layouts and add to document
     # Put controls in a single element.
-    lineplot_controls = WidgetBox(text, text2, text3, window_select,
+    lineplot_controls = WidgetBox(text, div1, text2, text3, div2, window_select,
                                   rolling_method)
 
 # Make plot with histogram
@@ -199,8 +204,6 @@ def timeseries_tab(ts, hist_ts):
     available_hist_ts = hist_ts.columns.tolist()
     available_hist_ts.sort()
 
-    print(available_hist_ts, len(available_hist_ts))
-
     hist_ts_selection = CheckboxButtonGroup(labels=available_hist_ts,
                                             active=[0, 1])
     hist_ts_selection.on_change('active', update)
@@ -213,15 +216,14 @@ def timeseries_tab(ts, hist_ts):
     # Call to set initial dataset.
     print(hist_ts_selection.labels, hist_ts_selection.active)
     # Initial ts and data source
-    initial_hist_ts = [hist_ts_selection.labels[i]
-                       for i in hist_ts_selection.active]
+    initial_hist_ts = available_hist_ts
 
     hist_src = make_dataset(initial_hist_ts, bin_width=binwidth_select.value)
 
     hist = make_plot(hist_src)
 
     # Put controls in a single element.
-    histogram_controls = WidgetBox(hist_ts_selection, binwidth_select)
+    histogram_controls = WidgetBox(div3, hist_ts_selection, binwidth_select)
 
     # Create a row layout
     grid = gridplot([[lineplot_controls, plot], [histogram_controls, hist]],
