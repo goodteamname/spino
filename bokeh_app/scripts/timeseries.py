@@ -89,7 +89,6 @@ def timeseries_tab(ts, hist_ts):
     div2 = Div(text="""<b>Rolling Window Functions:</b> <br> Specify the size and statistic for a rolling window function. <br>""")
     div3 = Div(text="""<b>Data Distribution:</b> <br> Examine the distribution of time series data points. <br>""")
 
-
     source = ColumnDataSource(data=ts)
     plot = make_lineplot(source)
 

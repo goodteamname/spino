@@ -30,7 +30,7 @@ def test_remove_trend(data, expectedShape):
     [
         (
             ts,
-            (ts.shape[0]-1, ts.shape[1])
+            (ts.shape[0]-1, ts.shape[1]+1)
         )
     ])
 def test_remove_seasonality(data, expectedShape):
