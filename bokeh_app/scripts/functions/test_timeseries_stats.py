@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 
 ts = pd.read_csv(
-  "bokeh_app/data/test_timeseries_copy.csv",
+  "bokeh_app/data/test_timeseries.csv",
   skiprows=1,
   delimiter=",",
   names=['time', 'y1', 'y2', 'y3']
