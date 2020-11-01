@@ -14,7 +14,7 @@
   <h3 align="center">SPINO</h3>
 
   <p align="center">
-    A Time Series Library!
+    A Time Series Visualisation App!
     <br />
     <a href="https://spino.readthedocs.io"><strong>Explore the docs »</strong></a> 
     <br />
